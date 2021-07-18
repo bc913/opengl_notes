@@ -134,6 +134,6 @@ TODO
 - [OpenGL Wiki](https://www.khronos.org/opengl/wiki)
 - [Khronos - OpenGL Concepts](https://www.khronos.org/opengl/wiki/Portal:OpenGL_Concepts)
 - [Apple's OpenGL documentation](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_designstrategies/opengl_designstrategies.html#//apple_ref/doc/uid/TP40001987-CH2-SW12)
-- [Khronos - Rendering Pipeline Overview]((https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview))
+- [Khronos - Rendering Pipeline Overview](https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview)
 - [Anton's OpenGL 4 Tutorials](https://antongerdelan.net/opengl/)
 - [learnopengl.com](https://learnopengl.com/)
