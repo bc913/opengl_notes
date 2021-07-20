@@ -286,6 +286,11 @@ glEnableVertexAttribArray(0);
 // glBindVertexArray(0); // not really necessary as well, but beware of calls that could affect VAOs while this one is bound (like binding element buffer objects, or enabling/disabling vertex attributes)
 
 ```
+
+### Best practices for working with Vertex Data
+Apple, Inc. has a detailed documentation on this topic. Please follow the [link](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_vertexdata/opengl_vertexdata.html#//apple_ref/doc/uid/TP40001987-CH406-SW3).
+
+
 ## References
 - [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
 
