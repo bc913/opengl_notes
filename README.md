@@ -37,7 +37,7 @@ Can be categorized as follows:
 2. Query the state
 3. Render given the current state of the context.
 
-### Objects
+### OpenGL Objects
 Some OpenGL state representations are handled through objects. This allows groups of state to be bundled together and can be controlled/reset with single command. 
 Most of the OpenGL objects bundles multiple context states together.
 
@@ -62,13 +62,13 @@ The implementations still must make rendering look synchronous while even being 
 - Avoid querying state that is part of the rendering process/commands.
 - Avoid changing the contents of the objects that are part of the rendering process.
 
-### Rendering Pipeline
+### The Rendering Pipeline
 It is best explained in the documentation:
 
 > The Rendering Pipeline is the sequence of steps that are taken by the OpenGL rendering system when the user issues a Drawing Command. The pipeline is a sequential series of steps, where each step performs some computation and passes its data to the next step for further processing.
 The OpenGL specification is very clear on the order in which objects are rendered. Specifically, objects are rendered in the exact order the user provides. While implementations are free to adjust the order internally, the rendered output must be as if it were processed in order.
 
-### Shaders
+### OpenGL Shaders
 Certain stages of the rendering pipeline is programmable and they are called `Shader Stage`. The programs that are executed by those stages are called `Shader`. Shaders are writtern in `OpenGL Shading Language`. 
 
 ### Framebuffer
