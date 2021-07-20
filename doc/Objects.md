@@ -25,12 +25,12 @@ Before things get confusing, I think it is better to stop here with the definiti
 ### What is Vertex?
 A `vertex` consists of one or more attributes such as the position, color, normal and/or texture coordinates. Each attribute in the vertex data corresponds to an attribute variable that acts as an input to the vertex shader.
 
-> Based on the above explanation, a vertex do NOT ONLY represents a set of coordinates for the position as we usually think in the geometry. It has slightly different meaning in OpenGL with some additional flavours.
+> Based on the above explanation, a vertex do NOT ONLY represent a set of coordinates for the position as we usually think in the geometry field. It has slightly different meaning in OpenGL with some additional flavours.
 
 In short, vertex information is represented through one or more vertex attributes.
 
 ### Vertex attribute
-A `vertex attribute` is a vector consisting of from one to four components and all components share the common data type i.e. the color vertex attribute might be defined as four `GLubyte` components (red, green, blue, alpha).
+A `vertex attribute` is a vector consisting of from one to four components and all components share the common data type i.e. the color vertex attribute might be defined as a collection of four `GLubyte` components (red, green, blue, alpha).
 
 The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each attribute can be enabled or disabled for array access. When an attribute's array access is disabled, any reads of that attribute by the vertex shader will produce a constant value instead of a value pulled form the array.
 
@@ -179,7 +179,7 @@ glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
 #### **Loosely-packed VBO(s)**:
 A VBO can carry multiple ( and different) type of vertex data at the same time. However, these different set of datas should be marked (indexed) properly to let VAO (eventually Vertex Shader) know. This type of packed VBO(s) is called `Loosely-packed VBO(s)`. Another way of implying this is: `Multiple vertex attributes (pointer) are associated to a single vertex.`
 
-> This is not an official or community accepted terminology. I have just throw it away :)
+> This is not a part of an official or community accepted terminology. I have just throw it away :)
 
 In order to pack different types of vertex data into one VBO, `glVertexAttribPointer()` and `glEnableVertexAttribArray()` should be called with proper arguments especially `index` and `stride` to avoid overlap between different vertex data types.
 
@@ -241,7 +241,7 @@ glBindVertexArray(0);
 // After this point, do NOT call any function that modifies the VAO state.
 ```
 
-#### ** Multiple VBO(s) attached to multiple VAO(s)**:
+#### **Multiple VBO(s) attached to multiple VAO(s)**:
 Regardless of having `tightly` or `loosely` packed VBO(s), a VAO can be defined for each VBO.
 
 ```cpp
