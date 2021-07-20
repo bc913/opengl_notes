@@ -32,7 +32,7 @@ The OpenGL context stores multiple states and each of them can be uniquely ident
 When a context is created, every piece of state is initialized with a well-defined default value. The list of identifiers can be found from the state table.
 
 ### OpenGL functions
-It can grouped into three:
+Can be categorized as follows:
 1. State setting into the context.
 2. Query the state
 3. Render given the current state of the context.
