@@ -2,8 +2,8 @@
 - [Introduction](#Introduction)
 - [How it works?](#How-it-works?)
 - [Rendering Pipeline](#Rendering-Pipeline)
-- [Shaders](#Shaders)
 - [Objects](#Objects)
+- [Shaders](#Shaders)
 - [Application Design Strategies](#Application-Design-Strategies)
 - [Common Mistakes](#Common-Mistakes)
 - [References](#References)
@@ -113,6 +113,15 @@ Also, these `GPU` cores are capable of running small pieces of programs and each
 - **Immediate mode (Fixed- pipeline)**: Pipeline is fixed; developers are limited to existing functions. 
 - **Core-Profile**: Pipeline is modular; development is flexible by editing parts of pipeline through shaders
 
+## Objects
+OpenGL object is an abstraction to hold some state. That's all. It has the following features:
+- When the objects are bound a context, the state they contain is mapped into the context's state.
+- If it is not bound, the contained state is NOT mapped into the context.
+- The changes made to the context's state will be reflected to the corresponding object's state.
+- Functions that act on the context' state will use the corresponding object's state.
+
+OpenGL objects in detail are explained [here](doc/Objects.md).
+
 ## Shaders
 Shaders are mini-programmes that define a style of rendering. They are compiled to run on the specialised GPU (graphics processing unit). The GPU has lots of processors specialised for floating-point operations. Each rendering stage can be split into many separate calculations - with one calculation done on each GPU processor; transform each vertex, colour each tiny square separately, etc. This means that we can compute a lot of the rendering in parallel - which makes it much faster than doing it with a CPU-based software renderer where we only have 1-8 processors (in the graphics world, "hardware" implies the graphics adapter).
 
@@ -121,8 +130,6 @@ Shaders are a way of re-programming the graphics pipeline. If we wanted to use a
 <p align="center">
   <img width="527" height="767" src="doc/images/Hardware_Pipeline.JPG">
 </p>
-
-## Objects
 
 ## [Application Design Strategies](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_designstrategies/opengl_designstrategies.html#//apple_ref/doc/uid/TP40001987-CH2-SW6)
 TODO
