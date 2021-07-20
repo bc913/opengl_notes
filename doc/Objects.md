@@ -2,6 +2,13 @@
 - [What is an OpenGL object?](#What-is-an-OpenGL-object?)
 - [Buffer Objects](#Buffer-Objects)
 - [Vertex Objects](#Vertex-Objects)
+    - [What is vertex](###What-is-vertex?)
+    - [Vertex attribute](###Vertex-attribute)
+    - [Vertex Buffer Object (VBO)](###Vertex-Buffer-Object-(VBO))
+    - [Vertex Array Object (VAO)](###Vertex-Array-Object-(VAO))
+    - [How does this work?](###How-does-this-work?)
+    - [Best practices for working with Vertex Data](###Best-practices-for-working-with-Vertex-Data)
+- [References](#References)
 
 ## What is an OpenGL object?
 OpenGL object is an abstraction to hold some state. That's all. It has the following features:
@@ -22,6 +29,7 @@ The general use for the `Buffer Objects` is as defined in the [offical documenta
 Before things get confusing, I think it is better to stop here with the definition of the `Buffer Object` and jump to other definitions.
 
 ## Vertex Objects
+
 ### What is Vertex?
 A `vertex` consists of one or more attributes such as the position, color, normal and/or texture coordinates. Each attribute in the vertex data corresponds to an attribute variable that acts as an input to the vertex shader.
 
