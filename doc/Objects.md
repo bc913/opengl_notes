@@ -2,12 +2,12 @@
 - [What is an OpenGL object?](#What-is-an-OpenGL-object?)
 - [Buffer Objects](#Buffer-Objects)
 - [Vertex Objects](#Vertex-Objects)
-    - [What is vertex](###What-is-vertex?)
-    - [Vertex attribute](###Vertex-attribute)
-    - [Vertex Buffer Object (VBO)](###Vertex-Buffer-Object-(VBO))
-    - [Vertex Array Object (VAO)](###Vertex-Array-Object-(VAO))
-    - [How does this work?](###How-does-this-work?)
-    - [Best practices for working with Vertex Data](###Best-practices-for-working-with-Vertex-Data)
+    - [What is vertex](#What-is-vertex?)
+    - [Vertex attribute](#Vertex-attribute)
+    - [Vertex Buffer Object (VBO)](#Vertex-Buffer-Object-(VBO))
+    - [Vertex Array Object (VAO)](#Vertex-Array-Object-(VAO))
+    - [How does this work?](#How-does-this-work?)
+    - [Best practices for working with Vertex Data](#Best-practices-for-working-with-Vertex-Data)
 - [References](#References)
 
 ## What is an OpenGL object?
