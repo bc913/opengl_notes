@@ -52,6 +52,7 @@ The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each a
 
 A VBO can hold information for multiple vertices and a vbo can be specialized for specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
 
+A VBO can be used to hold both `static` or `dynamic` vertex data.
 
 ### Vertex Array Object (VAO)
 A `Vertex Array Object` is an object which contains one or more `Vertex Buffer Objects (VBO)`. It is designed to store the information for a complete rendered object.
@@ -65,6 +66,13 @@ It has the following features:
 - Also stores the format of the vertex data.
 - Does `NOT` copy, freeze or store the contents of the referenced buffers so if you change the data in the buffers referenced by an existing `VAO`, those changes will be seen by the users of that `VAO`.
 - VAO(s) can `NOT` be shared between OpenGL contexts.
+- VAOs are responsible to report its layout to the shaders for rendering. Its layout defined by VBO which consists of the vertex attributes.
+
+### The relationship between VAO and VBO
+Since VAO is a client side functionality, it provides a great advantage for flexibility and dynamic control. However, it has performance penalty. Thankfully, this can be overcome by using VBO(s) which provides access to the server (VRAM) storage.
+
+Best of both worlds are achieved by using VBO and VAO together:
+> The vertex data is stored in `VRAM` (fast) but also can be controlled (reading/updating) from the client side.
 
 ### How does this work?
 Until now, we've only discussed about the theory and let's bring some pieces together. There are several ways to implement this.
@@ -252,7 +260,6 @@ glBindBuffer(GL_ARRAY_BUFFER, 0);
 glBindVertexArray(0);
 // After this point, do NOT call any function that modifies the VAO state.
 ```
-
 #### **Multiple VBO(s) attached to multiple VAO(s)**:
 Regardless of having `tightly` or `loosely` packed VBO(s), a VAO can be defined for each VBO.
 
