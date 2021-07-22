@@ -142,6 +142,15 @@ A consequence of this difference is **performance**. Since `Fixed Function Pipel
 
 However, programmable `Shaders` sit & run in the server(video graphics hardware) so the performance is maximized especially during rendering. No communication is required between `CPU` and `GPU`.
 
+`Immedieate mode` emposes also performance penalty through vertex specification. As stated in the [documentation](https://www.khronos.org/opengl/wiki/Legacy_OpenGL):
+
+*Vertex attribute data can be transferred once to the GPU, and rendered many times. With immediate-mode concepts this was not the case. Vertex attributes would have been transferred every frame - even when using client-side vertex arrays. Immediate-mode attribute specification has two major drawbacks:*
+
+- *It incurs a lot of API call, e.g. four calls for four different vertex attributes via glVertex*, glNormal*, glColor* and glTexCoord*.*
+
+- *Data has to transferred to the GPU after specification, even with completely static geometry that does not change its appearance in any way*
+
+
 ## [Application Design Strategies](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_designstrategies/opengl_designstrategies.html#//apple_ref/doc/uid/TP40001987-CH2-SW6)
 TODO
 
