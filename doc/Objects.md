@@ -69,6 +69,10 @@ It has the following features:
 ### How does this work?
 Until now, we've only discussed about the theory and let's bring some pieces together. There are several ways to implement this.
 
+#### Common Rules
+- `glVertexAttribPointer()` defines the layout of the VBO within the VAO.
+- Always bind the corresponding VBO before making a call to `glVertexAttribPointer()`.
+
 #### **Tightly-packed single VBO - single VAO**: 
 A VBO is called to be `tightly-packed` if it holds single vertex attribute with ONLY one specific info i.e. coordinates, colors, textures NOT multiple of them together. Another way of saying this is that `there is only one vertex attribute pointer for each vertex`.
 
