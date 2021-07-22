@@ -4,6 +4,7 @@
 - [Rendering Pipeline](#Rendering-Pipeline)
 - [Objects](#Objects)
 - [Shaders](#Shaders)
+- [Display List](#Display-List)
 - [Legacy vs. Modern OpenGL](##Legacy-vs.-Modern-OpenGL)
 - [Application Design Strategies](#Application-Design-Strategies)
 - [Common Mistakes](#Common-Mistakes)
@@ -128,6 +129,21 @@ Shaders are a way of re-programming the graphics pipeline. If we wanted to use a
   <img width="527" height="767" src="doc/images/Hardware_Pipeline.JPG">
 </p>
 
+## Display List
+`Display List` is a group of OpenGL commands stored for later execution. The commands are issued in the `CPU` (application) side between `glNewList()` and `glEndList()` API calls. When the `Display List` is created:
+1. All the correspoding vertex and pixel data are evaluated.
+2. Then copied into the display list memory which sits in the graphics hardware ram, VRAM (server) side.
+3. Combination of steps 1 & 2 is one time process.
+4. Since the data now is sitting on the server side, there is no need to re-evaluate and re-transfer the data from the client (RAM) again and again.
+
+Since it is a server-state, it can be shared with many clients.
+
+Pros:
+- Fastest way to render the static data.
+- For optimal performance, put matrix transformations, lighting and material calculations inside the display list, if possible.
+
+Cons:
+- Once the display list is compiled, it can NOT be modified. If you need frequent changes or dynamic data set, use `VAO` and `VBO`.
 
 ## Legacy vs. Modern OpenGL
 As the software/hardware technologies, performance and compatibility improve over time, some of the functionalities of OpenGL are also deprecated/updated and new feature are coming in.
@@ -164,3 +180,5 @@ TODO
 - [Khronos - Rendering Pipeline Overview](https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview)
 - [Anton's OpenGL 4 Tutorials](https://antongerdelan.net/opengl/)
 - [learnopengl.com](https://learnopengl.com/)
+- [glprogramming.com - Display Lists](https://www.glprogramming.com/red/chapter07.html)
+- [songho.ca - Display Lists](http://www.songho.ca/opengl/gl_displaylist.html)
