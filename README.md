@@ -4,6 +4,7 @@
 - [Rendering Pipeline](#Rendering-Pipeline)
 - [Objects](#Objects)
 - [Shaders](#Shaders)
+- [Legacy vs. Modern OpenGL](##Legacy-vs.-Modern-OpenGL)
 - [Application Design Strategies](#Application-Design-Strategies)
 - [Common Mistakes](#Common-Mistakes)
 - [References](#References)
@@ -109,10 +110,6 @@ Also, these `GPU` cores are capable of running small pieces of programs and each
 
 > Rendering operations require the presence of a properly-defined vertex array object and a linked Program Object or Program Pipeline Object which provides the shaders for the programmable pipeline stages.
 
-### Core-profile vs. Immediate mode
-- **Immediate mode (Fixed- pipeline)**: Pipeline is fixed; developers are limited to existing functions. 
-- **Core-Profile**: Pipeline is modular; development is flexible by editing parts of pipeline through shaders
-
 ## Objects
 OpenGL object is an abstraction to hold some state. That's all. It has the following features:
 - When the objects are bound a context, the state they contain is mapped into the context's state.
@@ -130,6 +127,20 @@ Shaders are a way of re-programming the graphics pipeline. If we wanted to use a
 <p align="center">
   <img width="527" height="767" src="doc/images/Hardware_Pipeline.JPG">
 </p>
+
+
+## Legacy vs. Modern OpenGL
+As the software/hardware technologies, performance and compatibility improve over time, some of the functionalities of OpenGL are also deprecated/updated and new feature are coming in.
+
+The major difference/consequence between `Legacy(Immediate mode)` and `Modern(Core-profile)` OpenGL is **pipeline structure**. Legacy OpenGL provides `Fixed Function Pipeline` which refers to the set of configurable processing state of the GPU hardware through some functions with limited capability throughout the `Rendering Pipeline`. For this reason, the application developers can only use exposed capabilities. As the name refers `Fixed Functions`, the capabilities are exposed through functions.
+
+In other words, `Fixed Function Pipeline` can be considered as non-programmable stages of the `Rendering Pipeline`. It is replaced with `Shaders` of some sort. The OpenGL rendering pipeline does still have non-programmable stages.
+
+`Fixed Function Pipeline` has some built-in math functionality that are still useful but it is less flexible in comparison to `Shaders`.
+
+A consequence of this difference is **performance**. Since `Fixed Function Pipeline` provides functions, all these function calls happens in the `CPU` side to the `GPU` side. This is a bottleneck. Although the bus is very wide between `CPU` and `GPU`, it is a performance penalty. It is such as a client-server call each time during rendering. 
+
+However, programmable `Shaders` sit & run in the server(video graphics hardware) so the performance is maximized especially during rendering. No communication is required between `CPU` and `GPU`.
 
 ## [Application Design Strategies](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_designstrategies/opengl_designstrategies.html#//apple_ref/doc/uid/TP40001987-CH2-SW6)
 TODO
