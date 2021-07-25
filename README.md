@@ -65,7 +65,7 @@ The implementations still must make rendering look synchronous while even being 
 - Avoid changing the contents of the objects that are part of the rendering process.
 
 ### The Rendering Pipeline
-It is best explained in the documentation:
+The collection of distinct stages that transforms a 3D object into a final 2D image. It is best explained in the documentation:
 
 > The Rendering Pipeline is the sequence of steps that are taken by the OpenGL rendering system when the user issues a Drawing Command. The pipeline is a sequential series of steps, where each step performs some computation and passes its data to the next step for further processing.
 The OpenGL specification is very clear on the order in which objects are rendered. Specifically, objects are rendered in the exact order the user provides. While implementations are free to adjust the order internally, the rendered output must be as if it were processed in order.
@@ -129,6 +129,7 @@ Shaders are a way of re-programming the graphics pipeline. If we wanted to use a
   <img width="527" height="767" src="doc/images/Hardware_Pipeline.JPG">
 </p>
 
+Shaders are explained in detail[here](doc/Shaders.md).
 ## Display List
 `Display List` is a group of OpenGL commands stored for later execution. The commands are issued in the `CPU` (application) side between `glNewList()` and `glEndList()` API calls. When the `Display List` is created:
 1. All the correspoding vertex and pixel data are evaluated.
