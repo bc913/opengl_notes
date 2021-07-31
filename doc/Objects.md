@@ -162,6 +162,11 @@ glGenBuffers(1, &colours_vbo);
 glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
 glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), colours, GL_STATIC_DRAW);
 
+// 5. Generate and bind VAO
+GLuint vao;
+glGenVertexArrays(1, &vao);
+glBindVertexArray(vao);
+
 // 6.
 glBindBuffer(GL_ARRAY_BUFFER, coord_vbo);
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
@@ -241,7 +246,6 @@ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0)
 glEnableVertexAttribArray(0); // 0 = index of the vertex attribute to be enabled
 
 // Vertex attribute at index 1
-//
 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 glEnableVertexAttribArray(1);
 
