@@ -9,7 +9,9 @@ Shaders are designed to be replace `Fixed Function Pipeline` with the intent of 
 In other words, the programmable stages of the rendering pipeline are called `Shaders`. A shader can run multiple taks in parallel. 
 
 Each stage/shader in the rendering pipeline performs after the previous one is completed and each stage/shader 
-feeds the next stage/shader by producing an output. Shaders are isolated programs and they are not allowed to communicate directly with each other except specifying inputs/outputs.
+feeds the next stage/shader by producing an output. In other words, each shader is fed (when required) from the previous shader except `vertex shader`. (Check vertex shader doc.)
+
+Shaders are isolated programs and they are not allowed to communicate directly with each other except specifying inputs/outputs.
 
 OpenGL shader are written in `OpenGL Shader Language (GLSL)`.
 
@@ -27,7 +29,7 @@ Since the shaders are `GPU` mechanism, GLSL should be compiled, linked and run o
 Steps:
 1. Read the shader (mini-programme) from file or as string and assign it to char[] (const char *).
 2. Create the shader using `glCreateShader()`.
-3. Define the source and compile shader using `glSourceShader()` and `glCompileShader()`.
+3. Define the source and compile shader using `glShaderSource()` and `glCompileShader()`.
 4. Check for compile errors using `glGetShaderiv()`.
 5. Repeat steps through 1-4 for other shaders defined if required.
 6. Since all the shaders are required to be packed together under `program`, create it using `glCreateProgram()`.
@@ -36,6 +38,8 @@ Steps:
 8. Check against linking errors using `glGetProgramiv()`.
 9. Use the shader program through `glUseProgram()`.
 10. **DO NOT** forget to delete the created shaders using `glDeleteShader()` when you're done.
+
+> Steps 9 & 10 can be replaced with each other. Order might not matter.
 
 ### Shader Parallelism
 Shaders run on the GPU and they are highly parallelised. Each shader can run multiple process at the sime time thanks to GPU.
@@ -65,7 +69,19 @@ Each shader throughout the rendering pipeline resembles a small C programme and 
 GLSL has several data types. Some of them are common with C language while some others are unique.
 
 - `void`, `bool`, `int`, `float`.
-- `vec3`, `vec4`, `mat3` (3x3 matrix), `mat4` (4x4 matrix)
+- `vec3`, `vec4` (use .x, .y, .z, .w to access components) (Vectors allows to do swizzling.)
+```cpp
+//swizzling
+vec2 someVec;
+vec4 otherVec = someVec.xyxx;
+vec4 anotherVec = otherVec.yxzy + someVec.xxxx;
+
+//
+vec2 vect = vec2(0.5, 0.3);
+vec4 other = vec4(vect, 0.33, 0.21);
+vec4 anotherVec = vec4(other.xyz, 1.0);
+```
+- `mat3` (3x3 matrix), `mat4` (4x4 matrix)
 - `sampler2D`, `samplerCube`, `sampler2DShadow`
 
 Check out the documentation for the complete list of the data types.
@@ -110,7 +126,9 @@ side.
 Each shader might have built-in `Input(in)` and `Output(out)` variables defined.
 
 ### Input variables (`in`)
-It is used to specify vertex attribute which comes from the `VBO`. There is maximum number for vertex attribute and that number depends on the hardware.
+It is used to specify vertex attribute which comes from the `VBO`. It means that each input variable is also known as `vertex attribute`. 
+
+There is maximum number for vertex attribute and that number depends on the hardware.
 ```cpp
 glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, GLint* max_limit);
 ```
@@ -126,7 +144,7 @@ Output variables have no effect on the shader they are declared and defined.
 `Uniform`s are the global variables to pass data from CPU to the shaders on `GPU`.
 
 Features:
-- Unique per shader program object.
+- Unique per shader program object so can be accessed from any shader at any stage in that shader program.
 - Since it is a CPU (client) global, it can be seen or updated by any other shader. **???**
 - Declared in `.glsl` files.
 ```cpp
@@ -178,6 +196,8 @@ Fatures:
 - Can send data from the vertex buffer (VBO) to the fragment shaders.
 - Each vertex shader can handle one vertex data at a time and multiple vertex shaders can run in parallel.
 
+Since the vertex shaders are the first shader in the pipeline, there is no way for them to be fed by the previous shader. There is no previous shader for them.
+
 Vertex shaders are fed with the `vertex attribute` which specifies the layout of the `Vertex Array Object (VAO)`. It basically receives a single vertex from the vertex stream and generates one to the output stream.
 
 ## Fragments vs. Pixels
@@ -190,7 +210,7 @@ Sometimes surfaces are overlap and there is more than one fragment for one pixel
 ## Fragment Shaders
 Once all the vertex shaders have computed the position of every vertex in clip space, then the `Fragment shader` run for every fragment (pixel-sized space) between vertices and determines the color of each fragment.
 
-Each fragment shader is responsible for one fragment to color up.
+Each fragment shader is responsible for one fragment to color up. For this reason, it requires a `vec4` output variable to be defined and populated.
 
 
 
