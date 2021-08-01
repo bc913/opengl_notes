@@ -80,6 +80,7 @@ Until now, we've only discussed about the theory and let's bring some pieces tog
 #### Common Rules
 - `glVertexAttribPointer()` defines the layout of the VBO within the VAO.
 - Always bind the corresponding VBO before making a call to `glVertexAttribPointer()`.
+- Calling `glBindBuffer()` will NOT do anything to VAO's state.
 
 #### **Tightly-packed single VBO - single VAO**: 
 A VBO is called to be `tightly-packed` if it holds single vertex attribute with ONLY one specific info i.e. coordinates, colors, textures NOT multiple of them together. Another way of saying this is that `there is only one vertex attribute pointer for each vertex`.
@@ -312,6 +313,46 @@ glEnableVertexAttribArray(0);
 
 ### Best practices for working with Vertex Data
 Apple, Inc. has a detailed documentation on this topic. Please follow the [link](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_vertexdata/opengl_vertexdata.html#//apple_ref/doc/uid/TP40001987-CH406-SW3).
+
+
+
+
+
+
+
+## Indexed Vertex Buffer Object (aka Element Buffer Object)
+In order to better understand what an `Element Buffer Object (EBO)` is, it'd be better to explain the indexing logic.
+
+### Indexing
+In the previous explanations, each vertex data is defined separately because they don't share any state (color, position, etc.) in common. If this is the case then data definition for each vertex is inevitable and desired.
+
+However, in some cases, some vertieces can be shared to render a geometry. Consider the following case:
+TODO: Add an image.
+
+As seen above, some vertices are located at the same position with same color so defining a vertex data (so vertex attributes) for each is not necessary and not benefical for performance. For this reason, an appriopriate vertex buffer object should be used and it is called `Indexed Vertex Buffer Object`.
+
+Regular VBOs are wrappers for memory location in the server side and hold the vertex attribute pointer values. Indexed VBOs are similar. They are wrappers for memory locations to hold vertex index data.
+
+To sum up, if there is an overlap between vertex data values for some vertices, using indexing is a better practice. You can represent the same geometry and so handle the rendering process with less number of vertices.
+
+### How does it work?
+The vertex data is stored through vertex attribute pointer within the VAO and the attribute pointer points a memory location in the video(server) side which is wrapped by the VBO. Now, we have an additional information to be stored and those are `indexes` for those vertex attributes.
+
+
+```cpp
+
+```
+
+> RULE: Since Indexed VBOs are part of VAO storage, they should be bound and data defined after the owner VAO is bound. Bind the owner VAO first.
+
+### References
+- https://www.khronos.org/opengl/wiki/Vertex_Specification#Index_buffers
+- https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
+- http://www.c-jump.com/bcc/common/Talk3/OpenGLlabs/c262_lab05/c262_lab05.html
+- http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
+- https://stackoverflow.com/questions/33863426/vaos-and-element-buffer-objects
+- https://stackoverflow.com/questions/15094433/opengl-why-is-gl-element-array-buffer-for-indices
+
 
 
 ## References
