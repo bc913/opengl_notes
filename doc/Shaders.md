@@ -153,6 +153,7 @@ uniform vec4 our_color;
 - It can be queried or set/update from CPU (client) side.
 ```cpp
 // Query
+// Since this is a query, no need to call glUseProgram in advance.
 GLuint ourColorLoc = glGetUniformLocation(<shader_programme_name>, "our_color");
 // Can make the call to use the program
 glUseProgram(<shader_programme_name>);
@@ -165,7 +166,11 @@ glUniform4f(ourColorLoc, 0.0f, 1.0f, 0.0f, 1.0f);
 
 // vec4 -> glUniform4f()
 ```
+> Calling any `glUniform*()` during run-time is very expensive. Try to avoid.
+
 - If declared uniform is not used anywhere, OpenGL will silently remove it.
+
+> Uniforms can be considered as an interface between the CPU(client) and GPU(server). `in`s and `out`s can be considered as an interface between shaders/stages. 
 
 ### How to handle vertex attribute locations (indexes)?
 The shaders and so the rendering pipeline should know where the vertex attributes sit at in terms of index. `VAO`s already have some layout defined for their contained `vertex attributes` through `VBO`s. However, the shaders do NOT have a clear idea where those vertex attributes sit at.
@@ -173,6 +178,7 @@ The shaders and so the rendering pipeline should know where the vertex attribute
 We have to let the shader know about the correct information about the vertex attributes' location. Three ways to do it:
 1. Use `layout(location)` syntax in .glsl file.
 2. Let the `shader's linker` know where those locations sit:
+
 ```cpp
 // ...
 // Make sure the shader is compiled --> glCompileShader() but not linked yet
@@ -182,6 +188,8 @@ glBindAttribLocation(<shader_programme_name>, 1, "vertex_color");
 // Now you can link
 glLinkProgram(<shader_programme_name>);
 ```
+> Use case for this: If you want your GLSL code to be compatible with OpenGL 3.2
+
 3. If you don't select either 1 or 2 then the GPU linker will decide what to happen and you can query the location for a vertex attribute as follows:
 ```cpp
 glVertexAttribPointer(glGetAttribLocation(), ...);
@@ -189,6 +197,19 @@ glVertexAttribPointer(glGetAttribLocation(), ...);
 
 ### Layout
 `Layout` syntax is a tag to identify the index(es) of the input(`in`) and ouput(`out`) attributes `AND` they have to **match** with the `index` argument in `glVertexAttribPointer()`.
+
+The very typical usage for this identifying the indexes of the vertex attributes in shader. Check Vertex Shader for details.
+
+They have a size. They can be used in conjuction with custom GLSL data structures. ??? The following setup is quite possible:
+```cpp
+struct OutData { vec1 data1; dvec4 data2; float val[3]; };
+
+layout(location=0) out vec3 some_vals[4];
+// Should start from 4 since some_vals occupies the first 4 index
+layout(location=4) out OutData myOut;
+// myOut consumes 6 indexes
+layout(location=10) out vec2 tex_Coord;
+```
 
 ## Vertex Shaders
 Fatures:
@@ -200,17 +221,120 @@ Since the vertex shaders are the first shader in the pipeline, there is no way f
 
 Vertex shaders are fed with the `vertex attribute` which specifies the layout of the `Vertex Array Object (VAO)`. It basically receives a single vertex from the vertex stream and generates one to the output stream.
 
+### Syntax
+Assume you have tightly-packed multiple VBOs or a loosely-packed VBO for different features of the vertex. Somehow you need to tell the shader the correct indexes of each future. This is achieved with `layout` syntax.
+```cpp
+layout(location = 0) in vec3 vertex_position;
+layout(location = 1) in vec3 vertex_colour;
+
+out vec3 colour;
+
+void main() {
+  colour = vertex_colour;
+  gl_Position = vec4(vertex_position, 1.0);
+}
+```
+
+### GLSL defaults
+- Input variables:
+```cpp
+in int gl_Vertex;
+in int gl_InstanceID;
+in int gl_DrawID;
+in int gl_BaseVertex;
+in int gl_BaseInstance;
+```
+
+- Output variables:
+```cpp
+out gl_PerVertex
+{
+    vec4 gl_Position; // position of the current vertex
+    float gl_PointSize;// size of rasterized points
+    float gl_ClipDistance[];
+};
+```
+
 ## Fragments vs. Pixels
 **Pixel**: The pixels are the elements that make up the final 2D image that is drawn inside a window display. 
 
-**Fragment**: It is a pixel-sized area of surface.
+**Fragment**: It can be defined in several ways:
+- It is the data necessary to generate a single pixel's worth of a drawing primitive in the frame buffer. 
+- All data required for OpenGL to render a single pixel.
+- It is a pixel-sized area of surface.
 
 Sometimes surfaces are overlap and there is more than one fragment for one pixel in that case.
 
-## Fragment Shaders
-Once all the vertex shaders have computed the position of every vertex in clip space, then the `Fragment shader` run for every fragment (pixel-sized space) between vertices and determines the color of each fragment.
+> All of the fragments are drawn even the hidden ones.
 
-Each fragment shader is responsible for one fragment to color up. For this reason, it requires a `vec4` output variable to be defined and populated.
+## Fragment Shaders
+Once all the vertex shaders have computed the position of every vertex in clip space, then the `Fragment shader` run for every fragment (pixel-sized space) between vertices and **determines the color of each fragment**.
+
+> Interesting fact: The fragment shader is optional.
+
+Each fragment shader is responsible for one fragment to color up. For this reason, **it requires a `vec4` output variable to be defined as first and populated**.
+
+> The hardware pipeline already knows that the first `vec4` output from the fragment shader should be the `color of the fragment`.
+
+### Data
+Fragment shader's data source is `Rasterization` stage which is the previous stage. 
+
+> Rasterization is not a shader type.
+
+The fragment shader's data is basically a sample-sized segment of a rasterized primitive. Data might include but not limited to:
+- raster position
+- depth
+- *interpolated* attributes from vertex processing stage (colors, textures, coordinates etc)
+- stencil
+- alpha
+- window ID
+- also the data required to test whether the fragment survives to become a pixel.
+
+There will be at least one fragment produced for every pixel area covered by the primitive being tested.
+
+### Color data format
+```cpp
+vec4(r, g, b, alpa)
+```
+
+### How does it work?
+As a general rule, shaders can work in parallel and each fragment shader is responsible from one fragment to process. If there is n fragments to process, n fragment shader will work in parallel.
+
+1. After a primitive is rasterized, each sample of pixels is covered by a primitive called `fragment`.
+2. Now, the data is populated for the fragment to be processed.
+3. Each fragment is written into the framebuffer image that will be displayed as the final pixels. Check `Difference Between Fragments and Pixels` part of this [resource](https://antongerdelan.net/opengl/shaders.html).
+4. Pass the result to the Blending stage.
+
+> Each fragment gets an interpolated feature (color, texture coords, normals, etc.) based on it's location. Assume you have a triangle with three vertices and three colors but there multiple fragments that fills between these vertices so the values for each fragment comes as interpolated.
+
+> This means that vertex shaders do NOT send constant value data. They send interpolated data.
+
+### GLSL defaults
+- Input variables:
+```cpp
+in vec4 gl_FragCoord;
+in bool gl_FrontFacing;
+in vec2 gl_PointCoord;
+// For OpenGL 4.0 or later
+in int gl_SampleID;
+in vec2 gl_SamplePosition;
+in int gl_SampleMasking[];
+```
+
+- Output variables:
+```cpp
+out float gl_FragDepth;
+out int gl_SampleMask[];
+```
+
+- User-defined outputs: They usually represent series of colors and directed into the specific buffers based on `glDrawBuffers()` state. Should be only allowed GLSL types.
+
+### Misc
+There are three ways to associate an output variable with a color number:
+1. In-shader specification using `vec4` output var and `layout(location) syntax`. (The latter is optional TODO: ???)
+2. Pre-link specification
+3. Automatic assignment
+
 
 
 

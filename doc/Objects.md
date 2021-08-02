@@ -46,6 +46,8 @@ The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each a
 ### Vertex Buffer Object (VBO)
 `VBO` is a memory buffer that belongs to the GPU as all other buffer objects but it is designed to hold information about vertices. It can store coordinates, colors, normals, texcoords, indices etc.
 
+In the `immediate-mode` days of OpenGL, the vertex data was defined in the client memory and was copied one-by-one to server side each time we draw. With VBOs, now the required memory is allocated in the server side before drawing starts and sits there until it is used. This brings huge performance achievement and no more copy required back and forth during drawing.
+
 <p align="center">
   <img width="827" height="412" src="images/VertexBuffer1.JPG">
 </p>
@@ -344,6 +346,10 @@ The vertex data is stored through vertex attribute pointer within the VAO and th
 ```
 
 > RULE: Since Indexed VBOs are part of VAO storage, they should be bound and data defined after the owner VAO is bound. Bind the owner VAO first.
+
+`gl*Draw*Elements()` takes its index information from the indexed buffer object currently bound to the `GL_ELEMENT_ARRAY_BUFFER` target but you don't have to do that each time rendering an object with indices. Since, it is part of the VAO storage, binding to the owner VAO is adequate. It implicitly binds to Indexed BO. 
+
+> A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER. This also means it stores its unbind calls so make sure you don't unbind the element array buffer before unbinding your VAO, otherwise it doesn't have an EBO configured. 
 
 ### References
 - https://www.khronos.org/opengl/wiki/Vertex_Specification#Index_buffers

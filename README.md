@@ -111,6 +111,15 @@ Also, these `GPU` cores are capable of running small pieces of programs and each
 
 > Rendering operations require the presence of a properly-defined vertex array object and a linked Program Object or Program Pipeline Object which provides the shaders for the programmable pipeline stages.
 
+### Vertex Processing Stage(s)
+This represents the set of stages of the OpenGL rendering pipeline where a sequence of vertices are proccessed through series (not in parallel) of shaders/stages. These are:
+
+- **Vertex Shader**
+- **Tessellation** (optional): Collects vertices and put them into primitives and then tessellates them.
+- **Geometry Shader** (optional): Governs the proccessing of the primitives. Receives a single primitive and output a sequence of vertices that generates 0 or more primitives. Unlike vertex shader there is no 1:1 mapping.
+
+> REMEMBER: The shaders do NOT work parallel between them. One shader has to wait for the previous one to finish. They can run in parallel for the data they are proccessing.
+
 ## Objects
 OpenGL object is an abstraction to hold some state. That's all. It has the following features:
 - When the objects are bound a context, the state they contain is mapped into the context's state.
