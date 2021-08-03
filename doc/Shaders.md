@@ -147,14 +147,18 @@ Features:
 - Unique per shader program object so can be accessed from any shader at any stage in that shader program.
 - Since it is a CPU (client) global, it can be seen or updated by any other shader. **???**
 - Declared in `.glsl` files.
+- Keep their values until they're either reset or updated.
+
 ```cpp
 uniform vec4 our_color;
 ```
 - It can be queried or set/update from CPU (client) side.
 ```cpp
 // Query
-// Since this is a query, no need to call glUseProgram in advance.
+// returns -1 if the location of the uniform can not be found.
+// No need to call glUseProgram before since it is query.
 GLuint ourColorLoc = glGetUniformLocation(<shader_programme_name>, "our_color");
+
 // Can make the call to use the program
 glUseProgram(<shader_programme_name>);
 
