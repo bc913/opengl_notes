@@ -11,7 +11,7 @@ Textures are different type of quantities and in order to see them they should b
 > They can also be used as data storage like buffer objects.
 
 ## Sampling
-Each texture coordinate actually corresponds to a texture color but it has to retrieved somehow. The proccess of retrieving the texture color using the texture coordinates is called `Sampling`.
+Each texture coordinate actually corresponds to a texture color (or some other feature) but it has to be retrieved somehow. The proccess of fetching a texture feature(s) value at a given position using the texture coordinates is called `Sampling`. GLSL controls much of the process of sampling, but there are many values associated with the texture object that can affect this as well.
 
 ## Texture coordinate (system)
 Each vertex of the object to be textured, should have an associated corresponding `texture coordinate`. This texture coordinate specifies what part of the texture (image) to sample from.
