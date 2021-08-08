@@ -38,21 +38,21 @@ A `vertex` consists of one or more attributes such as the position, color, norma
 In short, vertex information is represented through one or more vertex attributes.
 
 ### Vertex attribute
-A `vertex attribute` is a vector consisting of from one to four components and all components share the common data type i.e. the color vertex attribute might be defined as a collection of four `GLubyte` components (red, green, blue, alpha).
+A `vertex attribute` is a vector consisting of from one to four components and all components share a common data type (i.e. the color vertex attribute might be defined as a collection of four `GLubyte` components (red, green, blue, alpha)).
 
 The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each attribute can be enabled or disabled for array access. When an attribute's array access is disabled, any reads of that attribute by the vertex shader will produce a constant value instead of a value pulled form the array.
-
 
 ### Vertex Buffer Object (VBO)
 `VBO` is a memory buffer that belongs to the GPU as all other buffer objects but it is designed to hold information about vertices. It can store coordinates, colors, normals, texcoords, indices etc.
 
 In the `immediate-mode` days of OpenGL, the vertex data was defined in the client memory and was copied one-by-one to server side each time we draw. With VBOs, now the required memory is allocated in the server side before drawing starts and sits there until it is used. This brings huge performance achievement and no more copy required back and forth during drawing.
 
-A VBO can hold information for multiple vertices and a vbo can be specialized for specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
+A VBO can hold information for one or multiple vertices and a vbo can be specialized for specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
 
 A VBO can be used to hold both `static` or `dynamic` vertex data.
 
 ### Vertex Array Object (VAO)
+A `Vertex Array Object` is an object which contains data for one or more vertex using `vertex attribute pointers` which points to a memory location controlled by the `Vertex Buffer Objects (VBO)`. It is designed to store the information for a complete rendered object.
 
 It has the following features:
 - Uses the VBO(s) as the source of the vertex data.
