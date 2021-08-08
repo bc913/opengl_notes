@@ -64,6 +64,12 @@ It has the following features:
 ### The relationship between VAO and VBO
 Since VAO is a client side functionality, it provides a great advantage for flexibility and dynamic control. However, it has performance penalty. Thankfully, this can be overcome by using VBO(s) which provides access to the server (VRAM) storage.
 
+The memory required to hold vertex attribute information (data) is wrapped under VBO and that memory piece is accessible through `vertex attribute pointer(s)` which is wrapped by VAO(s). Vertex attribute pointers sits in the client side but they point to a memory location which belongs to the server side.
+
+<p align="center">
+  <img width="537" height="342" src="images/objects/VAO_VBO_Relationship.PNG">
+</p>
+
 Best of both worlds are achieved by using VBO and VAO together:
 > The vertex data is stored in `VRAM` (fast) but also can be controlled (reading/updating) from the client side.
 
