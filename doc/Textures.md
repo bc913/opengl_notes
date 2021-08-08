@@ -148,6 +148,18 @@ void glTexParameterI[i ui]v( GLenum target​, GLenum pname​, T *params​ );
 ```
 > Sampling parameters of the texture objects are also shared with `Sampler Objects` so both `Texture objects` and `Sampler objects` have them. If a texture is used with a sampler object, all of the parameters from the sampler object override those set by the texture object.
 
+## Sampler Objects
+Shaders can access texture coordinate data through vertex attribute pointers using `location` syntax but how about `sampling parameters`? There should be a mechanism or a data structure to access that data from shaders and `Sampler Objects` come to the rescue.
+
+A Sampler Object is an OpenGL Object that stores the sampling parameters for a Texture access inside of a shader. This is an OpenGL object but GLSL has a special syntax to access this object.
+```cpp
+uniform sampler<type> <sampler_name>;
+```
+It is declared as `uniform` because as you might remember, `uniform`s are the interface between client-server and so client side data (sampling parameters) can only be available in the server side thanks to the `uniform` syntax.
+
+### GLSL Sampler Variables
+The Sampler objects are represented with `sampler variables` and various types. The sampler types are used in GLSL to represent a texture of a particular kind. Therefore, sampler types represent textures.
+> RULE: Sampler variables SHOULD be declared as `uniform`.
 
 ## How does it work?
 Since the setup and usage of textures are complex and comprehensive enough, it'd be better to explain it with the code.
