@@ -53,11 +53,6 @@ A VBO can hold information for multiple vertices and a vbo can be specialized fo
 A VBO can be used to hold both `static` or `dynamic` vertex data.
 
 ### Vertex Array Object (VAO)
-A `Vertex Array Object` is an object which contains one or more `Vertex Buffer Objects (VBO)`. It is designed to store the information for a complete rendered object.
-
-<p align="center">
-  <img width="567" height="403" src="images/objects/VertexArrayObject1.JPG">
-</p>
 
 It has the following features:
 - Uses the VBO(s) as the source of the vertex data.
