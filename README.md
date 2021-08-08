@@ -4,6 +4,7 @@
 - [Rendering Pipeline](#Rendering-Pipeline)
 - [Objects](#Objects)
 - [Shaders](#Shaders)
+- [Textures](doc/Objects.md)
 - [Display List](#Display-List)
 - [Legacy vs. Modern OpenGL](##Legacy-vs.-Modern-OpenGL)
 - [Application Design Strategies](#Application-Design-Strategies)
