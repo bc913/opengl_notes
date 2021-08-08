@@ -80,7 +80,74 @@ The base level of a mipmap chain is the largest one in size. It is also the one 
 ## Texture Objects
 Textures in OpenGL are OpenGL Objects, and they follow the standard conventions of such. So they have the standard glGenTextures, glBindTexture, as you would expect.
 
-## Texture Units
+<p align="center">
+  <img width="386" height="313" src="images/texture/texture_object_anatomy.jpg">
+</p>
+
+A texture object consists of three main components:
+1. Texture storage
+2. Parameters (Sampling and Texture)
+
+### Texture Storage
+It is the part of the Texture Objects that contains the actual pixel data.
+
+- The storage can contain one or more images of a certain dimensionality. Each texture type has a specific arrangement of images in its storage.
+
+- Since the texture storage can store multiple images, there should be a way of identifying a specific texture in the storage. Each image in a texture storage can uniquely be identified by the following numbers:
+
+1. The mipmap `Level` (it contains the image) value for textures which have mipmap.
+2. For `Array Type Textures`, the array `Layer` that contains the image.
+3. For `CubeMap Type Textures`, the face within that array layer and mipmap level. Note that for cubemap array textures, the layer and face are combined into layer-faces.
+
+Therefore, a texture data can be thought of as a three-dimensional array of images. First index is the Mipmap level, the second one is the array layer and the third one is the cube map face.
+
+Details for texture storage can be found [here](https://www.khronos.org/opengl/wiki/Texture_Storage). Some noticable features will be presented here.
+
+- Image Size: It is importannt to know the size of the individual images within a texture storage. The images that have the same mipmap level in a texture storage, will have the same size and that size depends on the `base mipmap level`: level 0. The size of `Level 0` images defines the texture's effective size.
+
+> The number of array layers and cube map faces do not change with the mipmap level. If a texture has 3 array layers, every mipmap will have 3 array layers. This is important to remember when allocating texture storage and uploading pixel data.
+
+- Kinds of Storage: There three (3) kinds of storage:
+1. Mutable: Once it is allocated for a specific texture, it can then be altered to store another type of texture with a different size.
+
+- It can NOT be shared. It is only bound to a single texture object.
+- Mutable storage calls are made with `gl*TexImage*()` functions and they are capable of both allocating memory and placing (transferring) the pixel data into that memory.
+2. Immutable: Allocates all of the images for the texture `at once` (single call) and can NOT be chamged once it is allocated. This is like `const pointer`. The pointer can NOT point any other location but the contents it points to can be modified.
+
+Allocating an immutable storage requires the texture binding to its target first and then calling `glTexStorage*()` function. Each function only works with specific set of targets. This is like a `malloc` call, you have memory location allocated but no content.
+
+- It can be shared between texture objects so they are referring to the same memory location. (It is like `std::shared_ptr`)
+
+- To share the previously created immutable storate, use `glTextureView` function.
+
+
+3. Buffer: Only `Buffer Textures` can use buffer storage where the texture gets its storage from a `Buffer Object`. `Buffer Textures` can NOT use mutable or immutable storage.
+
+> Recommendation: If your implementation supports creating textures with immutable storage, you should use it wherever possible. It will save you from innumerable mistakes and headaches.
+
+#### Access to the mutable/immutable storage contents
+Once the storage has been defined with one of the above functions, the contents of the storage (the actual pixel data) can be modified and access via various functions.
+
+- Automatic mipmap generation
+- Pixel upload
+- Compressed pixel upload
+- Texture clear
+- Texture copy
+- Framebuffer copy
+- Framebuffer rendertarget
+- Invalidation
+- Pixel Download
+
+### Parameters (Sampling and Texture)
+Sampling and texture parameters control many aspects of how the texture functions. Both parameters are set with the following functions.
+
+```cpp
+void glTexParameter[if]( GLenum target​, GLenum pname​, T param​);
+void glTexParameter[if]v( GLenum target​, GLenum pname​, T *params​ );
+void glTexParameterI[i ui]v( GLenum target​, GLenum pname​, T *params​ );
+```
+> Sampling parameters of the texture objects are also shared with `Sampler Objects` so both `Texture objects` and `Sampler objects` have them. If a texture is used with a sampler object, all of the parameters from the sampler object override those set by the texture object.
+
 
 ## How does it work?
 Since the setup and usage of textures are complex and comprehensive enough, it'd be better to explain it with the code.
