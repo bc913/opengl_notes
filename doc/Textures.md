@@ -69,6 +69,8 @@ It has the following benefits:
 - Increased performance: Increases the cache efficiency. The lower bitmap resolution mipmapsfit more easily to the cache.
 - Since the full size textures is not needed as often, reducing the bandwith usage and increasing app perfomance will benefit.
 
+MipMaps help sampling and filtering with its benefits.
+
 Cons:
 - Mipmapping requires some extra computation and texture storage area; however, when it's not used, textures that are mapped onto smaller objects might shimmer and flash as the objects move. 
 
