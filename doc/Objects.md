@@ -80,6 +80,20 @@ A VBO is called to be `tightly-packed` if it holds single vertex attribute with 
 
 This can be achieved by defining correct vertex data and setting `stride` argument to `0` in `glVertexAttribPointer()` function call.
 
+- **Loosely-packed VBO**: A VBO can hold multiple different types of vertex data at the same time. However, these different set of datas should be marked (indexed) properly to let VAO (eventually Vertex Shader) know. This type of packed VBO(s) is called `Loosely-packed VBO(s)`. Another way of implying this is: `Multiple vertex attributes exist for each vertex and each attribute is accessible with different pointers and appropriate indexing.`
+
+> This is not a part of an official or community accepted terminology. I have just throw it away :)
+
+In order to pack different types of vertex data into one VBO, `glVertexAttribPointer()` and `glEnableVertexAttribArray()` should be called with proper arguments especially `index` and `stride` to avoid overlap between different vertex data types.
+
+<p align="center">
+  <img width="676" height="181" src="images/objects/LooselyPackedVertexAttrib.PNG">
+</p>
+
+<p align="center">
+  <img width="291" height="53" src="images/objects/LooselyPackedVBO.PNG">
+</p>
+
 ```cpp
 // 1. Define the vertex data
 // Here we only have {X,Y,Z} coordinates
@@ -196,12 +210,6 @@ glBufferData(GL_ARRAY_BUFFER, 9 * sizeof(GLfloat), colors, GL_STATIC_DRAW);
 // rest is the same
 ```
 #### **Loosely-packed VBO(s)**:
-A VBO can carry multiple ( and different) type of vertex data at the same time. However, these different set of datas should be marked (indexed) properly to let VAO (eventually Vertex Shader) know. This type of packed VBO(s) is called `Loosely-packed VBO(s)`. Another way of implying this is: `Multiple vertex attributes (pointer) are associated to a single vertex.`
-
-> This is not a part of an official or community accepted terminology. I have just throw it away :)
-
-In order to pack different types of vertex data into one VBO, `glVertexAttribPointer()` and `glEnableVertexAttribArray()` should be called with proper arguments especially `index` and `stride` to avoid overlap between different vertex data types.
-
 ```cpp
 // 1. Define vertices
 GLfloat vertices[] = {
