@@ -48,10 +48,6 @@ The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each a
 
 In the `immediate-mode` days of OpenGL, the vertex data was defined in the client memory and was copied one-by-one to server side each time we draw. With VBOs, now the required memory is allocated in the server side before drawing starts and sits there until it is used. This brings huge performance achievement and no more copy required back and forth during drawing.
 
-<p align="center">
-  <img width="827" height="412" src="images/objects/VertexBuffer1.JPG">
-</p>
-
 A VBO can hold information for multiple vertices and a vbo can be specialized for specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
 
 A VBO can be used to hold both `static` or `dynamic` vertex data.
