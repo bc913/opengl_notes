@@ -371,8 +371,70 @@ while (!glfwWindowShouldClose(window))
 ```
 
 ## Texture (Image) Units
+There are two reasons to bind a texture object:
+1. To modify object's storage or it's parameters
+2. To render something with it.
 
+Changing the texture stored state (storage or parameters) can be done with simple `glBindTexture` call. However, rendering with texture is a bit more complicated.
+
+The way a program is associated with textures is somewhat unintuitive. The mapping is done with the rendering context. A texture can be bound to one or more locations. These locations within the rendering context are called `texture image units`. OpenGL contexts have a maximum number of texture image units, queriable from the constant `GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS`.
+
+In other words, each texture object (and so the corresponding sampler object) is associated with a `texture image unit`. Actually, a `glBindTexture` call binds the texture object (and so the related sampler object) to a texture image unit. 
+
+Each texture image unit supports bindings to all texture types and multiple texture objecst(and so the corresponding sampler objects) can be bound to the same texture image unit.
+
+> IMPORTANT RULE: **DO NOT** bind two different texture (or sampler) type to the same texture unit. The rendering will fail. Bind each type of texture (sampler) to a different texture image unit.
+
+### How does it work?
+1. Define each texture with same syntax described above.
+2. Since we have multiple textures, the fragment shader will have multiple `sampler` variables to access sampler objects of each texture.
+```cpp
+#version 330 core
+in vec3 ourColor;
+in vec2 TexCoord;
+
+out vec4 FragColor;
+
+// texture samplers
+uniform sampler2D texture1;
+uniform sampler2D texture2;
+
+void main()
+{
+	// linearly interpolate between both textures (80% container, 20% awesomeface)
+	FragColor = mix(texture(texture1, TexCoord), texture(texture2, TexCoord), 0.2);
+}
 ```
+3. Also, we somehow have to tell the fragment shader which sampler belongs to which texture. This can be done from the client side.
+```cpp
+// ====================
+//  TEXTURE UNIT SETUP
+// ====================
+// Has to be done once
+
+// Since we make a modification on the shader, call glUseProgram for the shader programme
+glUseProgram(shader_programme);
+
+// Tell the shader what shader belongs to which texture object
+// get the location of the sampler variable named "texture1" and 
+// set the value of that sampler to the corresponding value of the texture image unit
+glUniform1i(glGetUniformLocation(shader_programme, "texture1"), 0);
+glUniform1i(glGetUniformLocation(shader_programme, "texture2"), 1);
+
+// NOTE: Make sure you activate the correct texture image unit for the related texture during rendering.
+```
+4. To make each texture drawn, we first have to activate the `texture image unit` for the texture it is associated.
+5. Any subsequent call i.e. `glBindTexture`, `glTexImage2D()`, `glTexParameterf()` etc will now manipulate the texture bound to the current (active) texture image unit.
+6. Repeat steps 4-5 for each texture.
+
+```cpp
+// Activate the texture image units and bind the associated textures
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, texture_obj);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, texture_obj2);
+```
+7. Render as usual.
 
 ## References
 - https://learnopengl.com/Getting-started/Textures
