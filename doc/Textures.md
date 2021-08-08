@@ -164,17 +164,213 @@ The Sampler objects are represented with `sampler variables` and various types. 
 ## How does it work?
 Since the setup and usage of textures are complex and comprehensive enough, it'd be better to explain it with the code.
 
+0. Provide the texture coordinates for the corresponding vertices and populate the corresponding vertex attribute (pointers) to be used later in the shader stage.
 1. Load the image from disk or memory location specified. OpenGL does not provide any functionality for this step but this is required to map the texture. Some third-party APIs can be used for this purpose.
+2. Generate the texture object using common OpenGL object generation syntax. `glGenTextures()`
+3. Bind the generated texture against the desired target (a type of textures). Once it is bound to a target(type), it can NOT be bound to another target.
+4. Set the [sampling parameters](https://www.khronos.org/opengl/wiki/Sampler_Object#Sampling_parameters) to the bound texture object.
+5. Allocate the storage (Mutable, Immutable or Buffer storage).
+6. (Optional) Once the storage is allocated, the contents of the storage can be altered via some available functions.
+7. Once you're done manipulating the storage contents,  you can now free the loaded image raw data because it is already loaded to the OpenGL context so no need to carry that load.
+At this point, some third-party APIs can be used.
+8. Now, we have all the texture data in the client side and we need to let server side know about the data. The texture coordinates are part of the vertex data and vertex data can only be passed to the server side through `Vertex Shader` so appripriate definitions should be made in the vertex shader side.
+```cpp
+#version 330 core
+layout (location = 0) in vec3 vertex_position;
+layout (location = 1) in vec3 vertex_color;
+layout (location = 2) in vec2 vertex_texture_position;
+
+out vec3 color;
+out vec2 textureCoord;
+
+void main()
+{
+	gl_Position = vec4(vertex_position.x, vertex_position.y, vertex_position.z, 1.0);
+	color = vertex_color;
+	textureCoord = vec2(vertex_texture_position.x, vertex_texture_position.y);
+}
+```
+After accessing the texture coordinates in vertex shader, this data should also be transferred to the fragment shader so fragment shader should accept the texture coordinate data as the input variable.
+
+9. Now, it is time for the fragment shader. The texture coordinate data is already fetched from the vertex shader and we also need sampling parameters data. This can be achieved with the `[Sampler Objects](#Sampler-Objects)`.
 
 ```cpp
-// 1. Load the texture image from file
+#version 330 core
 
-// 2. Generate the texture object
+in vec3 color;
+in vec2 texCoord;
+
+out vec4 frag_color;
+uniform sampler2D texture1; // texture sampler
+
+void main()
+{
+   frag_color = texture(texture1, texCoord);
+}
+```
+
+The fragment color can now be set using texture coordinate and texture sampling data with the GLSL's built-in method called `texture`.
+
+10. Generate and use the shaders as previoulsy described.
+11. All we need to do is drawing the texture on the view. Make sure the texture is bound before attempting to draw.
+
+The main code looks like this:
+```cpp
+// ====================
+// VBO - VAO GENERATION
+// ====================
+// 0. Vertex data for positions, colors and texture coordinates
+GLfloat vertices[] = {
+    // positions          // colors           // texture 2D coords
+      0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+      0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+};
+
+// Generate data for indices
+GLuint indices[] = {  // note that we start from 0!
+    0, 1, 3,  // first Triangle
+    1, 2, 3   // second Triangle
+};
+
+// Generate tightly-packed VBO and then the Indexed VBO
+// 2,3 & 4
+GLuint vbo;
+glGenBuffers(1, &vbo);
+glBindBuffer(GL_ARRAY_BUFFER, vbo);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+// 5. Generate and bind VAO
+GLuint vao;
+glGenVertexArrays(1, &vao);
+glBindVertexArray(vao);
+
+// Indexed VBO
+// IMPORTANT: Since they are directly stored in VAO, the corresponding 
+// VAO should be bound first.
+GLuint indexed_vbo;
+glGenBuffers(1, &indexed_vbo);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexed_vbo);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+// 6. Define and associate the vertex attributes to the vbo
+glBindBuffer(GL_ARRAY_BUFFER, vbo);
+//positions
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+glEnableVertexAttribArray(0);
+//colors
+glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+glEnableVertexAttribArray(1);
+//textures
+glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+glEnableVertexAttribArray(2);
+
+glBindBuffer(GL_ARRAY_BUFFER, 0); // not required
+
+// ====================
+//    TEXTURE SETUP
+// ====================
+// 1. Load the corresponding image
+std::string image_file_path("resources\\container.jpg");
+bool is_png = image_file_path.find(".png") != std::string::npos;
+
+int width, height, nrChannels;
+unsigned char* data = stbi_load(image_file_path.c_str(), &width, &height, &nrChannels, 0);
+if (!data)
+    std::cerr << "Failed to load texture image!!!" << std::endl;
+
+// 2. Generate the texture object like any other OpenGL object
 GLuint texture_obj;
 glGenTextures(1, &texture_obj);
 
-// 3. Bind it to a specific target
-// For this
+// 3. Bind it to a specific target. It is GL_TEXTURE_2D here.
+// RULE: texture_obj should and can NOT be bound to any other target after this point
+glBindTexture(GL_TEXTURE_2D, texture_obj);
+// all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+
+// 4. Set the sampling parameters
+// Wrapping (edge value sampling)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+// Filtering
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+// 5. Get the storage for the texture
+// Mutable storage in this case
+if (is_png)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+else
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+// 6. Storage contents can now be altered after this point.
+// It is often a good practice to generate a mipmap
+glGenerateMipmap(GL_TEXTURE_2D);
+
+// 7. You can now free the loaded image data.
+stbi_image_free(data);
+
+// ====================
+//      SHADERS
+// ====================
+// 8. Define the sources for the vertex and fragment shader
+const char* vertex_shader_source_str =
+    "#version 330 core\n"
+    "layout (location = 0) in vec3 vertex_position;\n"
+    "layout (location = 1) in vec3 vertex_color;\n"
+    "layout (location = 2) in vec2 vertex_texture_position;\n"
+    "out vec3 color;\n"
+    "out vec2 textureCoord;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(vertex_position.x, vertex_position.y, vertex_position.z, 1.0);\n"
+    "   color = vertex_color;\n"
+    "   textureCoord = vec2(vertex_texture_position.x, vertex_texture_position.y);\n"
+    "}\0";
+
+// 9. Fragment shader setup
+const char* fragment_shader_source_str =
+    "#version 330 core\n"
+    "in vec3 color;\n"
+    "in vec2 textureCoord;\n"
+    "out vec4 frag_color;\n"
+    "uniform sampler2D texture1;\n" // texture sampler
+    "void main()\n"
+    "{\n"
+    "   frag_color = texture(texture1, textureCoord) * vec4(color, 1.0);\n"
+    "}\0";
+
+// Steps 10a-h
+/*
+Shader setup
+...
+*/
+
+
+// ====================
+//      MAIN UI LOOP
+// ====================
+while (!glfwWindowShouldClose(window))
+{
+    /*
+    Some UI setup here
+    */
+
+    // 11. Make the texture drawn
+    glUseProgram(shader_programme);
+    glBindTexture(GL_TEXTURE_2D, texture_obj);
+    glBindVertexArray(vao);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+    /*
+    Some UI stuff here too
+    */
+}
+
+```
+
+## Texture (Image) Units
 
 ```
 
