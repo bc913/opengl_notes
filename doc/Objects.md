@@ -8,6 +8,7 @@
     - [Vertex Array Object (VAO)](#Vertex-Array-Object-(VAO))
     - [How does this work?](#How-does-this-work?)
     - [Best practices for working with Vertex Data](#Best-practices-for-working-with-Vertex-Data)
+- [Indexed Vertex Buffer Object](#Indexed-Vertex-Buffer-Object-(aka-Element-Buffer-Object))
 - [References](#References)
 
 ## What is an OpenGL object?
@@ -331,11 +332,6 @@ glEnableVertexAttribArray(0);
 Apple, Inc. has a detailed documentation on this topic. Please follow the [link](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Conceptual/OpenGL-MacProgGuide/opengl_vertexdata/opengl_vertexdata.html#//apple_ref/doc/uid/TP40001987-CH406-SW3).
 
 
-
-
-
-
-
 ## Indexed Vertex Buffer Object (aka Element Buffer Object)
 In order to better understand what an `Element Buffer Object (EBO)` is, it'd be better to explain the indexing logic.
 
@@ -343,7 +339,10 @@ In order to better understand what an `Element Buffer Object (EBO)` is, it'd be 
 In the previous explanations, each vertex data is defined separately because they don't share any state (color, position, etc.) in common. If this is the case then data definition for each vertex is inevitable and desired.
 
 However, in some cases, some vertieces can be shared to render a geometry. Consider the following case:
-TODO: Add an image.
+
+<p align="center">
+  <img width="465" height="417" src="images/objects/IndexedVBOExample.PNG">
+</p>
 
 As seen above, some vertices are located at the same position with same color so defining a vertex data (so vertex attributes) for each is not necessary and not benefical for performance. For this reason, an appriopriate vertex buffer object should be used and it is called `Indexed Vertex Buffer Object`.
 
@@ -351,30 +350,50 @@ Regular VBOs are wrappers for memory location in the server side and hold the ve
 
 To sum up, if there is an overlap between vertex data values for some vertices, using indexing is a better practice. You can represent the same geometry and so handle the rendering process with less number of vertices.
 
+<p align="center">
+  <img width="526" height="333" src="images/objects/Indexed_VBO.PNG">
+</p>
+
 ### How does it work?
 The vertex data is stored through vertex attribute pointer within the VAO and the attribute pointer points a memory location in the video(server) side which is wrapped by the VBO. Now, we have an additional information to be stored and those are `indexes` for those vertex attributes.
 
-
 ```cpp
+/*
+Define some vertex attributes first
+*/
+
+// Generate data for indices
+GLuint indices[] = {  // note that we start from 0!
+    0, 1, 3,  // first Triangle
+    1, 2, 3   // second Triangle
+};
+
+// 5. Generate and bind VAO
+GLuint vao;
+glGenVertexArrays(1, &vao);
+glBindVertexArray(vao); //Bind Vao First
+
+// Indexed VBO
+// Since they are directly stored in VAO, the corresponding 
+// VAO should Be bound first.
+GLuint indexed_vbo;
+glGenBuffers(1, &indexed_vbo);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexed_vbo);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 ```
-
 > RULE: Since Indexed VBOs are part of VAO storage, they should be bound and data defined after the owner VAO is bound. Bind the owner VAO first.
 
 `gl*Draw*Elements()` takes its index information from the indexed buffer object currently bound to the `GL_ELEMENT_ARRAY_BUFFER` target but you don't have to do that each time rendering an object with indices. Since, it is part of the VAO storage, binding to the owner VAO is adequate. It implicitly binds to Indexed BO. 
 
-> A VAO stores the glBindBuffer calls when the target is GL_ELEMENT_ARRAY_BUFFER. This also means it stores its unbind calls so make sure you don't unbind the element array buffer before unbinding your VAO, otherwise it doesn't have an EBO configured. 
+> A VAO stores the `glBindBuffer` calls when the target is GL_ELEMENT_ARRAY_BUFFER. This also means it stores its unbind calls so make sure you don't unbind the element array buffer before unbinding your VAO, otherwise it doesn't have an EBO configured. 
 
-### References
+## References
+- [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
+### EBO
 - https://www.khronos.org/opengl/wiki/Vertex_Specification#Index_buffers
 - https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
 - http://www.c-jump.com/bcc/common/Talk3/OpenGLlabs/c262_lab05/c262_lab05.html
 - http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-9-vbo-indexing/
 - https://stackoverflow.com/questions/33863426/vaos-and-element-buffer-objects
 - https://stackoverflow.com/questions/15094433/opengl-why-is-gl-element-array-buffer-for-indices
-
-
-
-## References
-- [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
-
