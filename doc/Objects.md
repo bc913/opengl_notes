@@ -75,10 +75,18 @@ Until now, we've only discussed about the theory and let's bring some pieces tog
 - Always bind the corresponding VBO before making a call to `glVertexAttribPointer()`.
 - Calling `glBindBuffer()` will NOT do anything to VAO's state.
 
-#### **Tightly-packed single VBO - single VAO**: 
-A VBO is called to be `tightly-packed` if it holds single vertex attribute with ONLY one specific info i.e. coordinates, colors, textures NOT multiple of them together. Another way of saying this is that `there is only one vertex attribute pointer for each vertex`.
+#### Definitions
+- **Tightly-packed VBO**: A VBO is called to be `tightly-packed` if it holds single vertex attribute with ONLY one specific info i.e. coordinates, colors, textures NOT multiple of them together. Another way of saying this is that `there is only one vertex attribute for each vertex and there is only one pointer for that attribute`.
 
-This can be achieved by defining correct vertex data and setting `stride` argument to `0` in `glVertexAttribPointer()` function call.
+This can be achieved by defining correct vertex data attribute pointer and setting `stride` argument to `0` in `glVertexAttribPointer()` function call.
+
+<p align="center">
+  <img width="647" height="139" src="images/objects/TightlyPackedVertexAttrib.PNG">
+</p>
+
+<p align="center">
+  <img width="300" height="62" src="images/objects/TightlyPackedVBO.PNG">
+</p>
 
 - **Loosely-packed VBO**: A VBO can hold multiple different types of vertex data at the same time. However, these different set of datas should be marked (indexed) properly to let VAO (eventually Vertex Shader) know. This type of packed VBO(s) is called `Loosely-packed VBO(s)`. Another way of implying this is: `Multiple vertex attributes exist for each vertex and each attribute is accessible with different pointers and appropriate indexing.`
 
@@ -94,6 +102,7 @@ In order to pack different types of vertex data into one VBO, `glVertexAttribPoi
   <img width="291" height="53" src="images/objects/LooselyPackedVBO.PNG">
 </p>
 
+#### **Tightly-packed single VBO - single VAO**: 
 ```cpp
 // 1. Define the vertex data
 // Here we only have {X,Y,Z} coordinates
