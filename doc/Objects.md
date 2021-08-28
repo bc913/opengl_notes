@@ -10,6 +10,7 @@
     - [How does this work?](#How-does-this-work?)
     - [Best practices for working with Vertex Data](#Best-practices-for-working-with-Vertex-Data)
 - [Indexed Vertex Buffer Object](#Indexed-Vertex-Buffer-Object-(aka-Element-Buffer-Object))
+- [Framebuffer Objects](#Framebuffer-Objects)
 - [References](#References)
 
 ## What is an OpenGL object?
@@ -392,6 +393,21 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 `gl*Draw*Elements()` takes its index information from the indexed buffer object currently bound to the `GL_ELEMENT_ARRAY_BUFFER` target but you don't have to do that each time rendering an object with indices. Since, it is part of the VAO storage, binding to the owner VAO is adequate. It implicitly binds to Indexed BO. 
 
 > A VAO stores the `glBindBuffer` calls when the target is GL_ELEMENT_ARRAY_BUFFER. This also means it stores its unbind calls so make sure you don't unbind the element array buffer before unbinding your VAO, otherwise it doesn't have an EBO configured. 
+
+## Framebuffer Objects
+### Custom:
+Buffer objects correspond to the allocated memory (locations) in the GPU side and until so far several of them are used for several purposes:
+- Color buffer for writing colors
+- Depth buffer to write and test depth information
+- Stencil buffer to discard certain fragments based on some conditions.
+
+These are stored somewhere in GPU called `Framebuffer` and it is the [default](https://www.khronos.org/opengl/wiki/Default_Framebuffer) one. If one wants to use a custom `Framebuffer`, a `Framebuffer` object should be created. As mentioned before, `framebuffer objects` are container objects and other objects can be attached to it. It is a collection of attachments. With them, one can render to non-Default Framebuffer locations, and thus render without disturbing the main screen.
+
+### Default:
+The Default Framebuffer is the Framebuffer that OpenGL is created with. It is created along with the OpenGL Context. Like Framebuffer Objects, the default framebuffer is a series of images. Unlike FBOs, one of these images usually represents what you actually see on some part of your screen.
+
+### Misc.
+- Framebuffer objects are NOT buffer objects. They are about rendering to off-screen images.
 
 ## References
 - [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
