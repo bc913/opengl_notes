@@ -163,6 +163,8 @@ It is declared as `uniform` because as you might remember, `uniform`s are the in
 The Sampler objects are represented with `sampler variables` and various types. The sampler types are used in GLSL to represent a texture of a particular kind. Therefore, sampler types represent textures.
 > RULE: Sampler variables SHOULD be declared as `uniform`.
 
+> RULE2: Keep in mind that `sampler2D` is a so called opaque type which means we can't instantiate these types, but only define them as uniforms. If the struct would be instantiated other than as a uniform (like a function parameter) GLSL could throw strange errors; the same thus applies to any struct holding such opaque types. 
+
 ## How does it work?
 Since the setup and usage of textures are complex and comprehensive enough, it'd be better to explain it with the code.
 
