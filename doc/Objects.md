@@ -1,5 +1,6 @@
 # OpenGL Objects
 - [What is an OpenGL object?](#What-is-an-OpenGL-object?)
+- [Object Types](#Object-Types)
 - [Buffer Objects](#Buffer-Objects)
 - [Vertex Objects](#Vertex-Objects)
     - [What is vertex](#What-is-vertex?)
@@ -20,6 +21,10 @@ OpenGL object is an abstraction to hold some state. That's all. It has the follo
 
 There is a common (generic) pattern for every object type in OpenGL for creation, binding, using, unbinding and deletion.
 The details will be given for seperately for each object type.
+
+## Object Types
+- Regular: Buffer, Query, RenderBuffer, Sampler, Texture
+- Container: Framebuffer, PRogram pipeline objects, Transform Feedback objects, Vertex Array Object
 
 ## Buffer Objects
 These are OpenGL objects that store an array of unformatted memory allocated by the context AKA the GPU. This memory location can be used to store data.
