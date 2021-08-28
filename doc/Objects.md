@@ -11,6 +11,7 @@
     - [Best practices for working with Vertex Data](#Best-practices-for-working-with-Vertex-Data)
 - [Indexed Vertex Buffer Object](#Indexed-Vertex-Buffer-Object-(aka-Element-Buffer-Object))
 - [Framebuffer Objects](#Framebuffer-Objects)
+- [Renderbuffer Objects](#Renderbuffer-Objects)
 - [References](#References)
 
 ## What is an OpenGL object?
@@ -408,6 +409,16 @@ The Default Framebuffer is the Framebuffer that OpenGL is created with. It is cr
 
 ### Misc.
 - Framebuffer objects are NOT buffer objects. They are about rendering to off-screen images.
+
+## Renderbuffer Objects
+
+Renderbuffer Objects are OpenGL Objects that contain images. They are created and used specifically with Framebuffer Objects. They are optimized for use as render targets, while Textures may not be, and are the logical choice when you do not need to sample (i.e. in a post-pass shader) from the produced image. If you need to resample (such as when reading depth back in a second shader pass), use Textures instead. Renderbuffer objects also natively accommodate Multisampling (MSAA).
+
+A renderbuffer object is an actual buffer e.g. an array of bytes, integers, pixels or whatever. However, a renderbuffer object can not be directly read from. This gives it the added advantage that OpenGL can do a few memory optimizations that can give it a performance edge over textures for off-screen rendering to a framebuffer.
+
+Renderbuffer objects store all the render data directly into their buffer without any conversions to texture-specific formats, making them faster as a writeable storage medium. You cannot read from them directly, but it is possible to read from them via the slow glReadPixels. This returns a specified area of pixels from the currently bound framebuffer, but not directly from the attachment itself.
+
+Because their data is in a native format they are quite fast when writing data or copying data to other buffers. Operations like switching buffers are therefore quite fast when using renderbuffer objects. The glfwSwapBuffers function we've been using at the end of each frame may as well be implemented with renderbuffer objects: we simply write to a renderbuffer image, and swap to the other one at the end. Renderbuffer objects are perfect for these kind of operations.
 
 ## References
 - [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
