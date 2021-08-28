@@ -440,6 +440,20 @@ glBindTexture(GL_TEXTURE_2D, texture_obj2);
 ```
 7. Render as usual.
 
+## Pixel Transfer
+### What is it?
+A Pixel Transfer operation is the act of taking pixel data from an unformatted memory buffer and copying it in OpenGL-owned storage governed by an image format. Or vice-versa: copying pixel data from image format-based storage to unformatted memory. There are a number of functions that affect how pixel transfer operation is handled; many of these relate to how the information in the memory buffer is to be interpreted.
+### Terminology
+Pixel transfers can either go from user memory to OpenGL memory, or from OpenGL memory to user memory (the user memory can be client memory or buffer objects). Pixel data in user memory is said to be packed. Therefore, transfers to OpenGL memory are called unpack operations, and transfers from OpenGL memory are called pack operations.
+### Pixel Format
+Pixels of the client data can be color values, depth values, combined depth/stencil values, or just stencil values. Color values can have up to four components: R, G, B and A. Depth and stencil values only have one component. Combined depth/stencil values have two components.
+
+## CubeMaps
+- [https://learnopengl.com/Advanced-OpenGL/Cubemaps](https://learnopengl.com/Advanced-OpenGL/Cubemaps)
+- [https://www.khronos.org/opengl/wiki/Cubemap_Texture](https://www.khronos.org/opengl/wiki/Cubemap_Texture)
+
+## Array Texture
+- [https://www.khronos.org/opengl/wiki/Array_Texture](https://www.khronos.org/opengl/wiki/Array_Texture)
 ## References
 - https://learnopengl.com/Getting-started/Textures
 - https://www.khronos.org/opengl/wiki/Texture
