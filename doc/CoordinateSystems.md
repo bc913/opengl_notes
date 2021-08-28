@@ -92,5 +92,13 @@ glUniformMatrix4fv(projection_mat_loc, 1, GL_FALSE, glm::value_ptr(projection_ma
 ```
 > If it is a static (one time) operation, accessing/modifying `uniform` variables from the client side can be made out of the main UI loop. If it is a dynamic(continuous) operation, keep this within the main UI loop.
 
+## Questions
+1.  
+
+LEaropengl.com' statement in Lighting: However, the calculations in the fragment shader are all done in world space, so shouldn't we transform the normal vectors to world space coordinates as well? But the vertex shader does the all the transformations from the view to 
+
+My statement above: from local to global, from global to view and from view to clip space are performed within each vertex shader.
+
+Which one is true?
 ## References
 - [https://learnopengl.com/Getting-started/Coordinate-Systems](https://learnopengl.com/Getting-started/Coordinate-Systems)
