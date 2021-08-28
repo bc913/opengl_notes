@@ -7,3 +7,4 @@
 - [Coordinate Systems](doc/CoordinateSystems.md)
 - [Camera](doc/Camera.md)
 - [Lighting](doc/Lighting.md)
+- [References](doc/References.md)
