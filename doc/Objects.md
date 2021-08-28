@@ -395,6 +395,9 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 > A VAO stores the `glBindBuffer` calls when the target is GL_ELEMENT_ARRAY_BUFFER. This also means it stores its unbind calls so make sure you don't unbind the element array buffer before unbinding your VAO, otherwise it doesn't have an EBO configured. 
 
+
+
+
 ## Framebuffer Objects
 ### Custom:
 Buffer objects correspond to the allocated memory (locations) in the GPU side and until so far several of them are used for several purposes:
@@ -422,6 +425,7 @@ Because their data is in a native format they are quite fast when writing data o
 
 ## References
 - [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
+
 ### EBO
 - https://www.khronos.org/opengl/wiki/Vertex_Specification#Index_buffers
 - https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
