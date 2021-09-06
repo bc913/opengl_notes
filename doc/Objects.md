@@ -423,6 +423,23 @@ Renderbuffer objects store all the render data directly into their buffer withou
 
 Because their data is in a native format they are quite fast when writing data or copying data to other buffers. Operations like switching buffers are therefore quite fast when using renderbuffer objects. The glfwSwapBuffers function we've been using at the end of each frame may as well be implemented with renderbuffer objects: we simply write to a renderbuffer image, and swap to the other one at the end. Renderbuffer objects are perfect for these kind of operations.
 
+### How to use?
+Their primary purpose is to serve as an attachment to the framebuffer objects and they are mostly convenient and used as depth and stencil attachments.
+
+### Syntax
+```cpp
+// Generate
+unsigned int rbo;
+glGenRenderbuffers(1, &rbo);
+// Bind
+glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+// Use them as depth and stencil storage
+glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600);
+
+```
+
+> **NOTE**: Renderbuffer objects can be more efficient for use in your off-screen render projects, but it is important to realize when to use renderbuffer objects and when to use textures. The general rule is that if you never need to sample data from a specific buffer, it is wise to use a renderbuffer object for that specific buffer. If you need to sample data from a specific buffer like colors or depth values, you should use a texture attachment instead.
+
 ## References
 - [https://github.com/JoeyDeVries/LearnOpenGL](https://github.com/JoeyDeVries/LearnOpenGL)
 
