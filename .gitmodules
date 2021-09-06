@@ -1,0 +1,12 @@
+[submodule "src/glfw"]
+	path = src/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "src/glm"]
+	path = src/glm
+	url = https://github.com/g-truc/glm.git
+[submodule "src/glad"]
+	path = src/glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "src/imgui"]
+	path = src/imgui
+	url = https://github.com/ocornut/imgui.git
