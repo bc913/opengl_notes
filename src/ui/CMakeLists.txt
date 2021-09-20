@@ -20,6 +20,5 @@ if (APPLE)
 endif(APPLE)
 
 target_link_libraries(${THIS} 
-    PUBLIC glfw ${LIBS} glm
-    PRIVATE glad
+    PUBLIC ${LIBS} glm glfw_handler
 )
