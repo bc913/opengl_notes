@@ -21,4 +21,5 @@ endif(APPLE)
 
 target_link_libraries(${THIS} 
     PUBLIC ${LIBS} glm glfw_handler
+    PRIVATE glad graphics
 )

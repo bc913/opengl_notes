@@ -3,6 +3,9 @@
 #include <glfw_handler/utils.h>
 #include <glfw_handler/common.h>
 
+#include <graphics/glsl_shader.h>
+#include <graphics/shader_type.h>
+
 #include <iostream>
 
 // settings
@@ -32,11 +35,8 @@ int main()
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
         return -1;
     }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -46,34 +46,31 @@ int main()
         return -1;
     }
 
-
     // build and compile our shader program
     // ------------------------------------
     // vertex shader
-    unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
+
+    auto vertexShaderObj = graphics::glsl_shader(graphics::shader_type::Vertex, vertexShaderSource);
+    if(!vertexShaderObj.compile())
+    {
+        std::cerr << "Vertex shader can not compile.\n";
+        return -1;
+    }
+    auto vertexShader = vertexShaderObj.id();
+    
+    // fragment shader
+    auto fs = graphics::glsl_shader(graphics::shader_type::Fragment, fragmentShaderSource);
+    if(!fs.compile())
+    {
+        std::cerr << "Fragment shader can not compile.\n";
+        return -1;
+    }
+    auto fragmentShader = fs.id();
+
+    // link shaders
     int success;
     char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // link shaders
+
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertexShader);
     glAttachShader(shaderProgram, fragmentShader);
