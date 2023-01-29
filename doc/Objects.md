@@ -16,10 +16,10 @@
 
 ## What is an OpenGL object?
 OpenGL object is an abstraction to hold some state. That's all. It has the following features:
-- When the objects are bound a context, the state they contain is mapped into the context's state.
+- When the objects are bound to a context, the state they contain is mapped into the context's state.
 - If it is not bound, the contained state is NOT mapped into the context.
 - The changes made to the context's state will be reflected to the corresponding object's state.
-- Functions that act on the context' state will use the corresponding object's state.
+- Functions that act on the context's state will use the corresponding object's state.
 
 There is a common (generic) pattern for every object type in OpenGL for creation, binding, using, unbinding and deletion.
 The details will be given for seperately for each object type.
