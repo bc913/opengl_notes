@@ -4,19 +4,23 @@ OpenGL is a cross-platform specification for graphics and its applications. It i
 As stated in the Khronos' [documentation](https://www.khronos.org/opengl/wiki/Portal:OpenGL_Concepts):
 > OpenGL is the name for the specification that describes the behavior of a rasterization-based rendering system. It defines the API through which a client application can control this system. The OpenGL rendering system is carefully specified to make hardware implementations allowable.
 
-Hardware vendors, the people who make GPUs, are responsible for writing implementations of the OpenGL rendering system. Their implementations, commonly called "drivers", translate OpenGL API commands into GPU commands. If a particular piece of hardware is unable to implement all of the OpenGL specification via hardware, the hardware vendor must still provide this functionality, typically via a software-based implementation of the features missing from hardware. 
+Hardware vendors, who manufacture GPUs, are responsible for writing implementations of the OpenGL rendering system. Their implementations, commonly called "drivers", translate OpenGL API commands into GPU commands. If a particular piece of hardware is unable to implement all of the OpenGL specification via hardware, the hardware vendor must still provide this functionality, typically via a software-based implementation of the features missing from hardware. 
 
 ## Context
 The context contains all the information that will be used by the OpenGL system to render, when the system is given a rendering command.
 
-Contexts are particular to that application and the same context can only belong to one application. However, an application might have multiple context.
+Contexts are particular to that application and the same context can only belong to one application. However, an application might have multiple contexts.
 
-OpenGL functions operate on the **current** and the **owner** context. In other words, the function pointers retrieved from one context should NOT be used in another context.
+OpenGL functions operate on the `current` and `owner` context. In other words, the function pointers retrieved from one context should `NOT` be used in another context.
+
+> 
 
 ## OpenGL is a state-machine
-The OpenGL context contains the information to be used by the rendering system and this information is named as **State**. The `state` is simply some value stored in the context.
+The OpenGL context contains the information to be used by the rendering system and this information is named as **State**. `A piece of state` is simply some value stored in the context.
 
-The OpenGL context stores multiple states and each of them can be uniquely identified through given unique identifiers. There are different types of states i.e. numerical value, array, string.
+The OpenGL context can store multiple states and each of them can be uniquely identified through given unique identifiers. There are different types of states i.e. `numerical value`, `array`, `string`.
+
+State variables include such things as drawing color, the viewing and projection transformations, lighting characteristics, and material properties. State variables are set per context. When your application creates OpenGL objects i.e. textures, these are also associated with the rendering context.
 
 When a context is created, every piece of state is initialized with a well-defined default value. The list of identifiers can be found from the state table.
 
@@ -24,14 +28,14 @@ When a context is created, every piece of state is initialized with a well-defin
 Can be categorized as follows:
 1. State setting into the context.
 2. Query the state
-3. Render given the current state of the context.
+3. Render the given state of the context.
 
 ## OpenGL Objects
 Some OpenGL state representations are handled through objects. This allows groups of state to be bundled together and can be controlled/reset with single command. 
 Most of the OpenGL objects bundles multiple context states together.
 
-There is a convention for naming, identifying, creating, using and deleting the objects.:
-- Object names (id) are represented through `GLuint`. These are identifiers.
+There is a convention for naming, identifying, creating, using and deleting the objects:
+- Object names (id) are represented through `GLuint`. These are identifiers. In other words, they are `integer handles`.
 - `glGen*` functions are used to generate objects.
 - Those objects are deleted using `glDelete*` functions by passing the appriopriate ids.
 - Since the objects bundles the context states and those state(s) exist within the context, those objects first are required to be bound to the context in order to modify the object or use it to render something. This is done with `glBind*` functions.
@@ -42,10 +46,12 @@ There is a convention for naming, identifying, creating, using and deleting the 
 - For few object types, it means that `this object is a default object which can NOT be destroyed.`.
 - With the exception of the Framebuffers, it should be treated as `invalid object - null`.
 
+> Some objects types are `container objects`: to store references to other objects and they can `NOT` be shared accross OpenGL contexts.
+
 ## Commands and Synchronization
 OpenGL usually specifies the behavior of commands but the implementation is all up-to graphics driver's manufacturer's. Normally, in order to achieve a graphics task, the OpenGL commands are executed in an order ( sequence) and every subsequent command must behave as if all prior commands have completed and their contents are visible.
 
-However, as previously stated the implementations might differ and most of the time, they are handled asynchronously. For instance, when a rendering function returns, it is most likely not even started yet and so not finished. As long as you don't query any state or object which is part of the rendering process, it is hard to tell the differece.
+However, as previously stated the implementations might differ and most of the time, they are handled asynchronously. For instance, when a rendering function returns odd are good that the actual rendering operation has not even started yet and so not finished. As long as you don't query any state or object which is part of the rendering process, it is hard to tell the differece.
 
 The implementations still must make rendering look synchronous while even being as async as possible. For best performance:
 - Avoid querying state that is part of the rendering process/commands.
@@ -80,6 +86,9 @@ It can be considered as the sequence of steps that OpenGL takes when rendering o
   <img width="281" height="609" src="images/Rendering_Pipeline.JPG">
 </p>
 
+> The blue boxes represent the programmable shader stages. Read further for details.
+
+
 All of these steps are highly specialized (they have one specific function) and they take place in `GPU` so they can easily be executed in parallel. Because of their parallel nature, graphics cards of today have thousands of small processing cores to quickly process your data within the graphics pipeline. 
 
 <p align="center">
@@ -101,12 +110,12 @@ This represents the set of stages of the OpenGL rendering pipeline where a seque
 
 ## Objects
 OpenGL object is an abstraction to hold some state. That's all. It has the following features:
-- When the objects are bound a context, the state they contain is mapped into the context's state.
+- When the objects are bound to a context, the state they contain is mapped into the context's state.
 - If it is not bound, the contained state is NOT mapped into the context.
 - The changes made to the context's state will be reflected to the corresponding object's state.
 - Functions that act on the context' state will use the corresponding object's state.
 
-OpenGL objects in detail are explained [here](Objects.md).
+OpenGL objects are explained [here](Objects.md) in detail.
 
 ## Shaders
 Certain stages of the rendering pipeline is programmable and they are called `Shader Stage`. The programs that are executed by those stages are called `Shader`. Shaders are writtern in `OpenGL Shading Language`. 
@@ -119,7 +128,7 @@ Shaders are a way of re-programming the graphics pipeline. If we wanted to use a
   <img width="527" height="767" src="images/Hardware_Pipeline.JPG">
 </p>
 
-Shaders are explained in detail[here](Shaders.md).
+Shaders are explained [here](Shaders.md) in detail.
 
 ## Framebuffer
 It is a collection of buffers that can be used as the destination for rendering. It has two types:
@@ -155,9 +164,9 @@ A consequence of this difference is **performance**. Since `Fixed Function Pipel
 
 However, programmable `Shaders` sit & run in the server(video graphics hardware) so the performance is maximized especially during rendering. No communication is required between `CPU` and `GPU`.
 
-`Immedieate mode` emposes also performance penalty through vertex specification. As stated in the [documentation](https://www.khronos.org/opengl/wiki/Legacy_OpenGL):
+`Immediate mode` emposes also performance penalty through vertex specification. As stated in the [documentation](https://www.khronos.org/opengl/wiki/Legacy_OpenGL):
 
-*Vertex attribute data can be transferred once to the GPU, and rendered many times. With immediate-mode concepts this was not the case. Vertex attributes would have been transferred every frame - even when using client-side vertex arrays. Immediate-mode attribute specification has two major drawbacks:*
+> *Vertex attribute data can be transferred once to the GPU, and rendered many times. With immediate-mode concepts this was not the case. Vertex attributes would have been transferred every frame - even when using client-side vertex arrays. Immediate-mode attribute specification has two major drawbacks:*
 
 - *It incurs a lot of API call, e.g. four calls for four different vertex attributes via glVertex*, glNormal*, glColor* and glTexCoord*.*
 
