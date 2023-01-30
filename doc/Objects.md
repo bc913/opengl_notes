@@ -26,10 +26,10 @@ The details will be given for seperately for each object type.
 
 ## Object Types
 - Regular: Buffer, Query, RenderBuffer, Sampler, Texture
-- Container: Framebuffer, PRogram pipeline objects, Transform Feedback objects, Vertex Array Object
+- Container: Framebuffer, Program pipeline objects, Transform Feedback objects, Vertex Array Object
 
 ## Buffer Objects
-These are OpenGL objects that store an array of unformatted memory allocated by the context AKA the GPU. This memory location can be used to store data.
+These are OpenGL objects that store an array of unformatted memory allocated by the context aka the `GPU`. This memory location can be used to store data.
 
 The general use for the `Buffer Objects` is as defined in the [offical documentation](https://www.khronos.org/opengl/wiki/Buffer_Object):
 > Most of the uses of buffer objects involve binding them to a certain target, which other OpenGL operations will detect the bound buffer and then use the data stored in that buffer in some way, either reading or writing values in a well-defined format. 
@@ -41,7 +41,7 @@ Before things get confusing, I think it is better to stop here with the definiti
 ### What is Vertex?
 A `vertex` consists of one or more attributes such as the position, color, normal and/or texture coordinates. Each attribute in the vertex data corresponds to an attribute variable that acts as an input to the vertex shader.
 
-> Based on the above explanation, a vertex do NOT ONLY represent a set of coordinates for the position as we usually think in the geometry field. It has slightly different meaning in OpenGL with some additional flavours.
+> Based on the above explanation, a vertex do NOT ONLY represent a set of coordinates for the position as we usually think in geometry. It has slightly different meaning in OpenGL with some additional flavours.
 
 In short, vertex information is represented through one or more vertex attributes.
 
@@ -55,7 +55,7 @@ The vertex attributes are numbered from 0 to `GL_MAX_VERTEX_ATTRIBS` - 1. Each a
 
 In the `immediate-mode` days of OpenGL, the vertex data was defined in the client memory and was copied one-by-one to server side each time we draw. With VBOs, now the required memory is allocated in the server side before drawing starts and sits there until it is used. This brings huge performance achievement and no more copy required back and forth during drawing.
 
-A VBO can hold information for one or multiple vertices and a vbo can be specialized for specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
+A VBO can hold information for one or multiple vertices and a vbo can be specialized for a specific type of data i.e. colors or coordinates. For instance, VBO1 can hold only coordinate data for one/multiple vertices while VBO2 is holding color data for those vertices.
 
 A VBO can be used to hold both `static` or `dynamic` vertex data.
 
@@ -70,7 +70,7 @@ It has the following features:
 - VAOs are responsible to report its layout to the shaders for rendering. Its layout defined by VBO which consists of the vertex attributes.
 
 ### The relationship between VAO and VBO
-Since VAO is a client side functionality, it provides a great advantage for flexibility and dynamic control. However, it has performance penalty. Thankfully, this can be overcome by using VBO(s) which provides access to the server (VRAM) storage.
+Since VAO is a client side functionality, it provides a great advantage for flexibility and dynamic control. However, it has performance penalty. Thankfully, we can overcome by using VBO(s) which provides access to the server (VRAM) storage.
 
 The memory required to hold vertex attribute information (data) is wrapped under VBO and that memory piece is accessible through `vertex attribute pointer(s)` which is wrapped by VAO(s). Vertex attribute pointers sits in the client side but they point to a memory location which belongs to the server side.
 
@@ -81,8 +81,8 @@ The memory required to hold vertex attribute information (data) is wrapped under
 Best of both worlds are achieved by using VBO and VAO together:
 > The vertex data is stored in `VRAM` (fast) but also can be controlled (reading/updating) from the client side.
 
-### How does this work?
-Until now, we've only discussed about the theory and let's bring some pieces together. There are several ways to implement this.
+### How does it work?
+Until now, we've only discussed about the theory and let's bring the pieces together. There are several ways to implement.
 
 #### Common Rules
 - `glVertexAttribPointer()` defines the layout of the VBO within the VAO.
@@ -104,9 +104,9 @@ This can be achieved by defining correct vertex data attribute pointer and setti
 
 - **Loosely-packed VBO**: A VBO can hold multiple different types of vertex data at the same time. However, these different set of datas should be marked (indexed) properly to let VAO (eventually Vertex Shader) know. This type of packed VBO(s) is called `Loosely-packed VBO(s)`. Another way of implying this is: `Multiple vertex attributes exist for each vertex and each attribute is accessible with different pointers and appropriate indexing.`
 
-> This is not a part of an official or community accepted terminology. I have just throw it away :)
+> This is not a part of an official or community accepted terminology. I've made this up :)
 
-In order to pack different types of vertex data into one VBO, `glVertexAttribPointer()` and `glEnableVertexAttribArray()` should be called with proper arguments especially `index` and `stride` to avoid overlap between different vertex data types.
+In order to pack different types of vertex data into one VBO, `glVertexAttribPointer()` and `glEnableVertexAttribArray()` should be called with proper arguments especially for `index` and `stride` to avoid overlap between different vertex data types.
 
 <p align="center">
   <img width="676" height="181" src="images/objects/LooselyPackedVertexAttrib.PNG">
@@ -121,9 +121,9 @@ In order to pack different types of vertex data into one VBO, `glVertexAttribPoi
 // 1. Define the vertex data
 // Here we only have {X,Y,Z} coordinates
 GLfloat coordinates[] = { 
-    0.0f,   0.5f,   0.0f, 
-    0.5f,   -0.5f,  0.0f, 
-    -0.5f,  -0.5f,  0.0f 
+    0.0f,   0.5f,   0.0f, // Vertex 1
+    0.5f,   -0.5f,  0.0f, // Vertex 2
+    -0.5f,  -0.5f,  0.0f  // Vertex 3
 };
 
 // 2. Generate a vbo for the coordinates
@@ -151,7 +151,7 @@ glBindBuffer(GL_ARRAY_BUFFER, coord_vbo);
 // Generate the vertex attribute (tightly packed)
 // since it is tightly packed, stride = 0
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-// Enable it's index for the most recently bound vbo (coord_vbo)
+// Enable vertex attribute's index (location) for the most recently bound vbo (coord_vbo)
 glEnableVertexAttribArray(0);
 
 // 7. Bind the VBO 0
@@ -171,15 +171,15 @@ Multiple VBOs can be associated to a single VAO and each VBO can be tightly-pack
 ```cpp
 // 1
 GLfloat coordinates[] = { 
-    0.0f,   0.5f,   0.0f, 
-    0.5f,   -0.5f,  0.0f, 
-    -0.5f,  -0.5f,  0.0f 
+    0.0f,   0.5f,   0.0f, // Vertex 1
+    0.5f,   -0.5f,  0.0f, // Vertex 2
+    -0.5f,  -0.5f,  0.0f  // Vertex 3
 };
 
 GLfloat colours[] = { 
-    1.0f, 0.0f, 0.0f, 
-    0.0f, 1.0f, 0.0f, 
-    0.0f, 0.0f, 1.0f 
+    1.0f, 0.0f, 0.0f, // Vertex 1
+    0.0f, 1.0f, 0.0f, // Vertex 2
+    0.0f, 0.0f, 1.0f  // Vertex 3
 };
 
 // 2,3 & 4
@@ -202,14 +202,13 @@ glBindVertexArray(vao);
 glBindBuffer(GL_ARRAY_BUFFER, coord_vbo);
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 glEnableVertexAttribArray(0);
-glBindBuffer(GL_ARRAY_BUFFER, 0); // not required
-
+glBindBuffer(GL_ARRAY_BUFFER, 0); // optional
 // Since we have multiple vbos to be linked to single vao, 
 // each vertex attrib array should have unique indexes.
 glBindBuffer(GL_ARRAY_BUFFER, colours_vbo);
 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 glEnableVertexAttribArray(1);
-glBindBuffer(GL_ARRAY_BUFFER, 0); // not required
+glBindBuffer(GL_ARRAY_BUFFER, 0); // optional
 
 // 7.
 glBindVertexArray(0);
@@ -266,15 +265,15 @@ glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
 // all defined attributes from this point will be associated to the 'vbo' VBO :)
 // The association between the index and VBO object is made at this stage.
 
-// Vertex attribute at index 0
+// Vertex attribute at index 0                  stride               offset  
 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
 glEnableVertexAttribArray(0); // 0 = index of the vertex attribute to be enabled
 
-// Vertex attribute at index 1
+// Vertex attribute at index 1                  stride               offset
 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
 glEnableVertexAttribArray(1);
 
-// Vertex attribute at index 2
+// Vertex attribute at index 2                  stride               offset
 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
 glEnableVertexAttribArray(2);
 
