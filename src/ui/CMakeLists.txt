@@ -1,8 +1,8 @@
-set(THIS "ui")
+project(opengl_notes_ui)
+# Compile-Build
+add_executable(${PROJECT_NAME} "")
 
-add_executable(${THIS} "")
-
-target_sources(${THIS} 
+target_sources(${PROJECT_NAME} 
     PRIVATE
         main.cpp
 )
@@ -19,7 +19,24 @@ if (APPLE)
     set(LIBS ${LIBS} ${APPLE_LIBS})
 endif(APPLE)
 
-target_link_libraries(${THIS} 
-    PUBLIC ${LIBS} glm glfw_handler
-    PRIVATE glad graphics
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME}
+        PUBLIC ${LIBS} glm glfw_handler
+        PRIVATE glad graphics
+    )
+else()
+    target_link_libraries(${PROJECT_NAME}
+        PUBLIC glm glfw_handler
+        PRIVATE glad graphics
+    )
+endif()
+
+# Install
+install(
+    TARGETS ${PROJECT_NAME}
+    EXPORT ${PROJECT_NAME}Targets
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    #PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} # Windows ONly
 )

@@ -26,6 +26,12 @@ if (APPLE)
     set(LIBS ${LIBS} ${APPLE_LIBS})
 endif(APPLE)
 
-target_link_libraries(${PROJECT_NAME} 
-    PUBLIC glfw ${LIBS} glad
-)
+if (APPLE)
+    target_link_libraries(${PROJECT_NAME} 
+        PUBLIC glfw ${LIBS} glad
+    )
+else()
+    target_link_libraries(${PROJECT_NAME} 
+        PUBLIC glfw glad
+    )
+endif()
