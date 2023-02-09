@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.24)
 include(FetchContent)
 # # GLM Setup
-add_subdirectory(glm)
-# FetchContent_Declare(
-#         glm 
-#         GIT_REPOSITORY https://github.com/g-truc/glm.git 
-#         GIT_TAG 0.9.9.8
-# )
-# FetchContent_MakeAvailable(glm)
+FetchContent_Declare(
+        glm 
+        GIT_REPOSITORY https://github.com/g-truc/glm.git 
+        GIT_TAG 0.9.9.8
+)
+FetchContent_MakeAvailable(glm)
 # Glad Setup
 # For Glad 2.0, use glad generator to create file and manually add it.
 # Remove the following commands for glad v2.0
